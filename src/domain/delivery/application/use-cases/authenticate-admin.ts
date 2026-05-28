@@ -1,22 +1,22 @@
 import { Encrypter } from 'src/core/cryptography/encrypter'
 import { HashComparer } from 'src/core/cryptography/hash-comparer'
 import { Either, left, right } from 'src/core/either'
-import { CouriersRepository } from '../repositories/couriers-repository'
+import { AdminsRepository } from '../repositories/admins-repository'
 import { InvalidCredentialsError } from './errors/invalid-credentials'
 
-interface AuthenticateCourierUseCaseRequest {
+interface AuthenticateAdminUseCaseRequest {
   cpf: string
   password: string
 }
 
-type AuthenticateCourierUseCaseResponse = Either<
+type AuthenticateAdminUseCaseResponse = Either<
   InvalidCredentialsError,
   { accessToken: string }
 >
 
-export class AuthenticateCourierUseCase {
+export class AuthenticateAdminUseCase {
   constructor(
-    private readonly couriersRepo: CouriersRepository,
+    private readonly adminsRepo: AdminsRepository,
     private readonly comparer: HashComparer,
     private readonly jwt: Encrypter,
   ) {}
@@ -24,16 +24,16 @@ export class AuthenticateCourierUseCase {
   async execute({
     cpf,
     password,
-  }: AuthenticateCourierUseCaseRequest): Promise<AuthenticateCourierUseCaseResponse> {
-    const courier = await this.couriersRepo.findByCPF(cpf)
+  }: AuthenticateAdminUseCaseRequest): Promise<AuthenticateAdminUseCaseResponse> {
+    const admin = await this.adminsRepo.findByCPF(cpf)
 
-    if (!courier) {
+    if (!admin) {
       return left(new InvalidCredentialsError())
     }
 
     const isValidPassword = await this.comparer.compare(
       password,
-      courier.password,
+      admin.password,
     )
 
     if (!isValidPassword) {
@@ -41,8 +41,8 @@ export class AuthenticateCourierUseCase {
     }
 
     const accessToken = await this.jwt.encrypt({
-      sub: courier.id.toString(),
-      role: courier.role,
+      sub: admin.id.toString(),
+      role: admin.role,
     })
 
     return right({ accessToken })

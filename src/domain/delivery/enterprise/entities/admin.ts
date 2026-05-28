@@ -2,13 +2,13 @@ import { Entity } from 'src/core/entity'
 import { UniqueEntityId } from 'src/core/value-objects/unique-entity-id'
 import { CPF } from './value-objects/cpf'
 
-interface CourierProps {
+interface AdminProps {
   name: string
   cpf: CPF
   password: string
 }
 
-export class Courier extends Entity<CourierProps> {
+export class Admin extends Entity<AdminProps> {
   get name() {
     return this.props.name
   }
@@ -21,11 +21,11 @@ export class Courier extends Entity<CourierProps> {
     return this.props.password
   }
 
-  get role(): 'COURIER' {
-    return 'COURIER'
+  get role(): 'ADMIN' {
+    return 'ADMIN'
   }
 
-  static create(props: CourierProps, id?: UniqueEntityId) {
-    return new Courier(props, id)
+  static create(props: AdminProps, id?: UniqueEntityId) {
+    return new Admin(props, id)
   }
 }
