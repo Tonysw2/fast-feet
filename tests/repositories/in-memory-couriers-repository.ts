@@ -15,4 +15,25 @@ export class InMemoryCouriersRepository implements CouriersRepository {
 
     return courier
   }
+
+  async findById(id: string): Promise<Courier | null> {
+    const courier = this.items.find((c) => c.id.toString() === id)
+
+    if (!courier) return null
+
+    return courier
+  }
+
+  async findMany({ page }: { page: number }): Promise<Courier[]> {
+    return this.items.slice((page - 1) * 20, page * 20)
+  }
+
+  async save(data: Courier): Promise<void> {
+    const index = this.items.findIndex((c) => c.id.equals(data.id))
+    this.items[index] = data
+  }
+
+  async delete(data: Courier): Promise<void> {
+    this.items = this.items.filter((c) => !c.id.equals(data.id))
+  }
 }
