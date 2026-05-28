@@ -3,20 +3,20 @@
 ## Entities
 
 - [x] Create `Admin` — `name`, `cpf`, `password`
-- [ ] Create `Recipient` — `name`, `email`
+- [x] Create `Recipient` — `name`, `email`
 - [ ] Create `Order` — `title`, `status`, `recipientId`, `courierId?`, `photoUrl?`, `deliveryLatitude`, `deliveryLongitude`
 
 ## Repository Interfaces
 
 - [x] Create `AdminsRepository` — `findByCPF`, `findById`, `create`
-- [ ] Update `CouriersRepository` — add `findById`, `findMany`, `save`, `delete`
-- [ ] Create `RecipientsRepository` — `findById`, `findByEmail`, `findMany`, `create`, `save`, `delete`
+- [x] Update `CouriersRepository` — add `findById`, `findMany`, `save`, `delete`
+- [x] Create `RecipientsRepository` — `findById`, `findByEmail`, `findMany`, `create`, `save`, `delete`
 - [ ] Create `OrdersRepository` — `findById`, `findMany`, `findManyNearby`, `findManyByCourierId`, `create`, `save`, `delete`
 
 ## Errors
 
-- [ ] Create `ResourceNotFoundError`
-- [ ] Create `NotAllowedError`
+- [x] Create `ResourceNotFoundError`
+- [x] Create `NotAllowedError`
 
 ## Use Cases — Auth
 
@@ -25,19 +25,19 @@
 
 ## Use Cases — Couriers (admin)
 
-- [ ] `FetchCouriersUseCase`
-- [ ] `GetCourierUseCase`
-- [ ] `EditCourierUseCase`
-- [ ] `DeleteCourierUseCase`
-- [ ] `ChangeCourierPasswordUseCase`
+- [x] `FetchCouriersUseCase`
+- [x] `GetCourierUseCase`
+- [x] `EditCourierUseCase`
+- [x] `DeleteCourierUseCase`
+- [x] `ChangeCourierPasswordUseCase`
 
 ## Use Cases — Recipients (admin)
 
-- [ ] `RegisterRecipientUseCase`
-- [ ] `FetchRecipientsUseCase`
-- [ ] `GetRecipientUseCase`
-- [ ] `EditRecipientUseCase`
-- [ ] `DeleteRecipientUseCase`
+- [x] `RegisterRecipientUseCase`
+- [x] `FetchRecipientsUseCase`
+- [x] `GetRecipientUseCase`
+- [x] `EditRecipientUseCase`
+- [x] `DeleteRecipientUseCase`
 
 ## Use Cases — Orders (admin)
 
@@ -55,3 +55,13 @@
 - [ ] `ReturnOrderUseCase`
 - [ ] `FetchNearbyOrdersUseCase`
 - [ ] `FetchCourierDeliveriesUseCase`
+
+# Regras de negócio
+
+- Somente usuário do tipo admin pode realizar operações de CRUD nas encomendas
+- Somente usuário do tipo admin pode realizar operações de CRUD dos entregadores
+- Somente usuário do tipo admin pode realizar operações de CRUD dos destinatários
+- Para marcar uma encomenda como entregue é obrigatório o envio de uma foto
+- Somente o entregador que retirou a encomenda pode marcar ela como entregue
+- Somente o admin pode alterar a senha de um usuário
+- Não deve ser possível um entregador listar as encomendas de outro entregador
