@@ -1,0 +1,22 @@
+{
+	"editor.defaultFormatter": "biomejs.biome",
+	"editor.codeActionsOnSave": {
+		"source.fixAll.biome": "explicit",
+		"source.organizeImports.biome": "explicit"
+	},
+
+	"[dockercompose]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+
+	"symbols.files.associations": {
+		"*.module.ts": "nest",
+		"*.controller.ts": "nest-controller",
+		"*.service.ts": "nest-service",
+		"*.decorator.ts": "nest-decorator",
+		"*.middleware.ts": "nest-middleware",
+		"*.guard.ts": "nest-guard",
+		"*.e2e.ts": "vitest",
+		"*.e2e-spec.ts": "ts-test"
+	}
+}
