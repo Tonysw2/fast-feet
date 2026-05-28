@@ -13,12 +13,20 @@ export class Courier extends Entity<CourierProps> {
     return this.props.name
   }
 
+  set name(value: string) {
+    this.props.name = value
+  }
+
   get cpf() {
     return this.props.cpf
   }
 
   get password() {
     return this.props.password
+  }
+
+  set password(value: string) {
+    this.props.password = value
   }
 
   get role(): 'COURIER' {
