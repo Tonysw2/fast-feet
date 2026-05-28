@@ -18,5 +18,6 @@
     "*.guard.ts": "nest-guard",
     "*.e2e.ts": "vitest",
     "*.e2e-spec.ts": "ts-test"
-  }
+  },
+  "cSpell.words": ["encrypter", "Encrypter"]
 }
