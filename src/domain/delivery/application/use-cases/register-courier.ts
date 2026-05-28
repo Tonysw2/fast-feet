@@ -6,43 +6,43 @@ import { CouriersRepository } from '../repositories/couriers-repository'
 import { CourierAlreadyExists } from './errors/courier-already-exists'
 
 interface RegisterCourierUseCaseRequest {
-	name: string
-	cpf: string
-	password: string
+  name: string
+  cpf: string
+  password: string
 }
 
 type RegisterCourierUseCaseResponse = Either<
-	CourierAlreadyExists,
-	{ courier: Courier }
+  CourierAlreadyExists,
+  { courier: Courier }
 >
 
 export class RegisterCourierUseCase {
-	constructor(
-		private readonly hasher: HashGenerator,
-		private readonly couriersRepo: CouriersRepository,
-	) {}
+  constructor(
+    private readonly hasher: HashGenerator,
+    private readonly couriersRepo: CouriersRepository,
+  ) {}
 
-	async execute({
-		cpf,
-		name,
-		password,
-	}: RegisterCourierUseCaseRequest): Promise<RegisterCourierUseCaseResponse> {
-		const courierExists = await this.couriersRepo.findByCPF(cpf)
+  async execute({
+    cpf,
+    name,
+    password,
+  }: RegisterCourierUseCaseRequest): Promise<RegisterCourierUseCaseResponse> {
+    const courierExists = await this.couriersRepo.findByCPF(cpf)
 
-		if (courierExists) {
-			return left(new CourierAlreadyExists(cpf))
-		}
+    if (courierExists) {
+      return left(new CourierAlreadyExists(cpf))
+    }
 
-		const hashedPassword = await this.hasher.hash(password)
+    const hashedPassword = await this.hasher.hash(password)
 
-		const courier = Courier.create({
-			name,
-			password: hashedPassword,
-			cpf: CPF.create(cpf),
-		})
+    const courier = Courier.create({
+      name,
+      password: hashedPassword,
+      cpf: CPF.create(cpf),
+    })
 
-		await this.couriersRepo.create(courier)
+    await this.couriersRepo.create(courier)
 
-		return right({ courier })
-	}
+    return right({ courier })
+  }
 }

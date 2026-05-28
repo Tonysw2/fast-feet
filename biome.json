@@ -1,44 +1,45 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.4.16/schema.json",
-	"vcs": {
-		"enabled": true,
-		"clientKind": "git",
-		"useIgnoreFile": true
-	},
-	"files": {
-		"ignoreUnknown": false
-	},
-	"formatter": {
-		"enabled": true,
-		"indentStyle": "tab"
-	},
-	"linter": {
-		"enabled": true,
-		"rules": {
-			"recommended": true,
+  "$schema": "https://biomejs.dev/schemas/2.4.16/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": false
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "lineEnding": "crlf"
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
 
-			"style": {
-				"useImportType": "off"
-			}
-		}
-	},
-	"javascript": {
-		"formatter": {
-			"quoteStyle": "single",
-			"semicolons": "asNeeded"
-		}
-	},
-	"json": {
-		"parser": {
-			"allowTrailingCommas": true
-		}
-	},
-	"assist": {
-		"enabled": true,
-		"actions": {
-			"source": {
-				"organizeImports": "on"
-			}
-		}
-	}
+      "style": {
+        "useImportType": "off"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "semicolons": "asNeeded"
+    }
+  },
+  "json": {
+    "parser": {
+      "allowTrailingCommas": true
+    }
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  }
 }
