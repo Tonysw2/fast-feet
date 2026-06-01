@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client"
+  output   = "./generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum OrderStatus {
+  WAITING
+  PICKED_UP
+  DELIVERED
+  RETURNED
+}
+
+model Admin {
+  id       String @id @default(uuid())
+  name     String
+  cpf      String @unique
+  password String
+
+  @@map("admins")
+}
+
+model Courier {
+  id       String  @id @default(uuid())
+  name     String
+  cpf      String  @unique
+  password String
+  orders   Order[]
+
+  @@map("couriers")
+}
+
+model Recipient {
+  id            String         @id @default(uuid())
+  name          String
+  email         String         @unique
+  orders        Order[]
+  notifications Notification[]
+
+  @@map("recipients")
+}
+
+model Order {
+  id                String      @id @default(uuid())
+  title             String
+  status            OrderStatus @default(WAITING)
+  photoUrl          String?
+  deliveryLatitude  Float
+  deliveryLongitude Float
+  recipientId       String
+  courierId         String?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  recipient Recipient @relation(fields: [recipientId], references: [id])
+  courier   Courier?  @relation(fields: [courierId], references: [id])
+
+  @@map("orders")
+}
+
+model Notification {
+  id          String    @id @default(uuid())
+  title       String
+  content     String
+  readAt      DateTime?
+  createdAt   DateTime  @default(now())
+  recipientId String
+
+  recipient Recipient @relation(fields: [recipientId], references: [id])
+
+  @@map("notifications")
+}

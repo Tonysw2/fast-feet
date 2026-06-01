@@ -20,10 +20,17 @@
 
       "style": {
         "useImportType": "off"
+      },
+
+      "complexity": {
+        "noStaticOnlyClass": "off"
       }
     }
   },
   "javascript": {
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
+    },
     "formatter": {
       "quoteStyle": "single",
       "semicolons": "asNeeded"
