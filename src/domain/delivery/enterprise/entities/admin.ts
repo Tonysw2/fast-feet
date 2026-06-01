@@ -1,4 +1,4 @@
-import { Entity } from 'src/core/entity'
+import { Entity } from 'src/core/entities/entity'
 import { UniqueEntityId } from 'src/core/value-objects/unique-entity-id'
 import { CPF } from './value-objects/cpf'
 
