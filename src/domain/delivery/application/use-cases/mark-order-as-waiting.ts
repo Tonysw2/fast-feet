@@ -29,8 +29,7 @@ export class MarkOrderAsWaitingUseCase {
       return left(new NotAllowedError())
     }
 
-    order.status = 'WAITING'
-    order.courierId = null
+    order.markAsWaiting()
 
     await this.ordersRepo.save(order)
 

@@ -4,14 +4,14 @@
 
 - [x] Create `Admin` — `name`, `cpf`, `password`
 - [x] Create `Recipient` — `name`, `email`
-- [ ] Create `Order` — `title`, `status`, `recipientId`, `courierId?`, `photoUrl?`, `deliveryLatitude`, `deliveryLongitude`
+- [x] Create `Order` — `title`, `status`, `recipientId`, `courierId?`, `photoUrl?`, `deliveryLatitude`, `deliveryLongitude`
 
 ## Repository Interfaces
 
 - [x] Create `AdminsRepository` — `findByCPF`, `findById`, `create`
 - [x] Update `CouriersRepository` — add `findById`, `findMany`, `save`, `delete`
 - [x] Create `RecipientsRepository` — `findById`, `findByEmail`, `findMany`, `create`, `save`, `delete`
-- [ ] Create `OrdersRepository` — `findById`, `findMany`, `findManyNearby`, `findManyByCourierId`, `create`, `save`, `delete`
+- [x] Create `OrdersRepository` — `findById`, `findMany`, `findManyNearby`, `findManyByCourierId`, `create`, `save`, `delete`
 
 ## Errors
 
@@ -41,20 +41,20 @@
 
 ## Use Cases — Orders (admin)
 
-- [ ] `CreateOrderUseCase`
-- [ ] `FetchOrdersUseCase`
-- [ ] `GetOrderUseCase`
-- [ ] `EditOrderUseCase`
-- [ ] `DeleteOrderUseCase`
-- [ ] `MarkOrderAsWaitingUseCase`
+- [x] `CreateOrderUseCase`
+- [x] `FetchOrdersUseCase`
+- [x] `GetOrderUseCase`
+- [x] `EditOrderUseCase`
+- [x] `DeleteOrderUseCase`
+- [x] `MarkOrderAsWaitingUseCase`
 
 ## Use Cases — Orders (courier)
 
-- [ ] `PickUpOrderUseCase`
-- [ ] `DeliverOrderUseCase`
-- [ ] `ReturnOrderUseCase`
-- [ ] `FetchNearbyOrdersUseCase`
-- [ ] `FetchCourierDeliveriesUseCase`
+- [x] `PickUpOrderUseCase`
+- [x] `DeliverOrderUseCase`
+- [x] `ReturnOrderUseCase`
+- [x] `FetchNearbyOrdersUseCase`
+- [x] `FetchCourierDeliveriesUseCase`
 
 # Regras de negócio
 

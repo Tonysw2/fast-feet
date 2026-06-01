@@ -1,5 +1,9 @@
-import { Entity } from 'src/core/entities/entity'
+import { AggregateRoot } from 'src/core/entities/aggregate-root'
 import { UniqueEntityId } from 'src/core/value-objects/unique-entity-id'
+import { OrderDeliveredEvent } from '../events/order-delivered-event'
+import { OrderPickedUpEvent } from '../events/order-picked-up-event'
+import { OrderReturnedEvent } from '../events/order-returned-event'
+import { OrderWaitingEvent } from '../events/order-waiting-event'
 
 export type OrderStatus = 'WAITING' | 'PICKED_UP' | 'DELIVERED' | 'RETURNED'
 
@@ -13,7 +17,7 @@ interface OrderProps {
   deliveryLongitude: number
 }
 
-export class Order extends Entity<OrderProps> {
+export class Order extends AggregateRoot<OrderProps> {
   get title() {
     return this.props.title
   }
@@ -24,10 +28,6 @@ export class Order extends Entity<OrderProps> {
 
   get status() {
     return this.props.status
-  }
-
-  set status(value: OrderStatus) {
-    this.props.status = value
   }
 
   get recipientId() {
@@ -42,16 +42,8 @@ export class Order extends Entity<OrderProps> {
     return this.props.courierId
   }
 
-  set courierId(value: UniqueEntityId | null) {
-    this.props.courierId = value
-  }
-
   get photoUrl() {
     return this.props.photoUrl
-  }
-
-  set photoUrl(value: string | null) {
-    this.props.photoUrl = value
   }
 
   get deliveryLatitude() {
@@ -68,6 +60,29 @@ export class Order extends Entity<OrderProps> {
 
   set deliveryLongitude(value: number) {
     this.props.deliveryLongitude = value
+  }
+
+  markAsWaiting() {
+    this.props.status = 'WAITING'
+    this.props.courierId = null
+    this.addDomainEvent(new OrderWaitingEvent(this))
+  }
+
+  pickUp(courierId: UniqueEntityId) {
+    this.props.status = 'PICKED_UP'
+    this.props.courierId = courierId
+    this.addDomainEvent(new OrderPickedUpEvent(this))
+  }
+
+  deliver(photoUrl: string) {
+    this.props.status = 'DELIVERED'
+    this.props.photoUrl = photoUrl
+    this.addDomainEvent(new OrderDeliveredEvent(this))
+  }
+
+  returnOrder() {
+    this.props.status = 'RETURNED'
+    this.addDomainEvent(new OrderReturnedEvent(this))
   }
 
   static create(

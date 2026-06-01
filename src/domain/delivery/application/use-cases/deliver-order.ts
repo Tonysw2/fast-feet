@@ -37,8 +37,7 @@ export class DeliverOrderUseCase {
       return left(new NotAllowedError())
     }
 
-    order.status = 'DELIVERED'
-    order.photoUrl = photoUrl
+    order.deliver(photoUrl)
 
     await this.ordersRepo.save(order)
 

@@ -32,8 +32,7 @@ export class PickUpOrderUseCase {
       return left(new NotAllowedError())
     }
 
-    order.status = 'PICKED_UP'
-    order.courierId = new UniqueEntityId(courierId)
+    order.pickUp(new UniqueEntityId(courierId))
 
     await this.ordersRepo.save(order)
 

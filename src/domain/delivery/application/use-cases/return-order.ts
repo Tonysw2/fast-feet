@@ -35,7 +35,7 @@ export class ReturnOrderUseCase {
       return left(new NotAllowedError())
     }
 
-    order.status = 'RETURNED'
+    order.returnOrder()
 
     await this.ordersRepo.save(order)
 
