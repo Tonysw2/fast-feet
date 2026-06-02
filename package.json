@@ -13,7 +13,8 @@
     "start:prod": "node dist/main",
     "test": "vitest",
     "test:watch": "vitest --watch",
-    "biome:fix": "biome check --write"
+    "biome:fix": "biome check --write",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
