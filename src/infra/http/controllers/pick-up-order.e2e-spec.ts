@@ -1,7 +1,7 @@
-import { INestApplication } from '@nestjs/common'
-import { Test } from '@nestjs/testing'
-import { hash } from 'bcryptjs'
 import { randomUUID } from 'node:crypto'
+import { INestApplication } from '@nestjs/common'
+import { JwtService } from '@nestjs/jwt'
+import { Test } from '@nestjs/testing'
 import { AppModule } from 'src/app.module'
 import { PrismaService } from 'src/infra/database/prisma.service'
 import request from 'supertest'
@@ -9,8 +9,10 @@ import request from 'supertest'
 describe('PickUpOrderController (E2E)', () => {
   let app: INestApplication
   let prisma: PrismaService
+  let jwtService: JwtService
   let courierAccessToken: string
   let courierId: string
+  let recipientId: string
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -21,42 +23,38 @@ describe('PickUpOrderController (E2E)', () => {
     await app.init()
 
     prisma = moduleRef.get(PrismaService)
+    jwtService = moduleRef.get(JwtService)
 
     const courier = await prisma.courier.create({
-      data: {
-        name: 'Test Courier',
-        cpf: '21111111101',
-        password: await hash('password123', 8),
-      },
+      data: { name: 'Test Courier', cpf: '21111111101', password: 'any' },
     })
 
     courierId = courier.id
+    courierAccessToken = jwtService.sign({ sub: courier.id, role: 'COURIER' })
 
-    const loginResponse = await request(app.getHttpServer())
-      .post('/sessions')
-      .send({ cpf: '21111111101', password: 'password123' })
+    const recipient = await prisma.recipient.create({
+      data: { name: 'Test Recipient', email: 'pick-up-order@test.com' },
+    })
 
-    courierAccessToken = loginResponse.body.accessToken
+    recipientId = recipient.id
   })
 
   afterAll(async () => {
     await prisma.order.deleteMany({
       where: { recipient: { email: 'pick-up-order@test.com' } },
     })
-    await prisma.recipient.deleteMany({ where: { email: 'pick-up-order@test.com' } })
+    await prisma.recipient.deleteMany({
+      where: { email: 'pick-up-order@test.com' },
+    })
     await prisma.courier.deleteMany({ where: { cpf: '21111111101' } })
     await app.close()
   })
 
   it('[PATCH] /orders/:id/pick-up — should return 204 and assign courier to WAITING order', async () => {
-    const recipient = await prisma.recipient.create({
-      data: { name: 'Test Recipient', email: 'pick-up-order@test.com' },
-    })
-
     const order = await prisma.order.create({
       data: {
         title: 'Test Package',
-        recipientId: recipient.id,
+        recipientId,
         deliveryLatitude: -23.55052,
         deliveryLongitude: -46.633309,
       },
@@ -74,12 +72,19 @@ describe('PickUpOrderController (E2E)', () => {
   })
 
   it('[PATCH] /orders/:id/pick-up — should return 403 when order is not WAITING', async () => {
-    const order = await prisma.order.findFirst({
-      where: { status: 'PICKED_UP', recipient: { email: 'pick-up-order@test.com' } },
+    const order = await prisma.order.create({
+      data: {
+        title: 'Already Picked Package',
+        status: 'PICKED_UP',
+        courierId,
+        recipientId,
+        deliveryLatitude: -23.55052,
+        deliveryLongitude: -46.633309,
+      },
     })
 
     const response = await request(app.getHttpServer())
-      .patch(`/orders/${order!.id}/pick-up`)
+      .patch(`/orders/${order.id}/pick-up`)
       .set('Authorization', `Bearer ${courierAccessToken}`)
 
     expect(response.statusCode).toBe(403)

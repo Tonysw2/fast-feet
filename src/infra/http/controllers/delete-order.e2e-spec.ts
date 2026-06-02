@@ -1,7 +1,7 @@
-import { INestApplication } from '@nestjs/common'
-import { Test } from '@nestjs/testing'
-import { hash } from 'bcryptjs'
 import { randomUUID } from 'node:crypto'
+import { INestApplication } from '@nestjs/common'
+import { JwtService } from '@nestjs/jwt'
+import { Test } from '@nestjs/testing'
 import { AppModule } from 'src/app.module'
 import { PrismaService } from 'src/infra/database/prisma.service'
 import request from 'supertest'
@@ -9,7 +9,9 @@ import request from 'supertest'
 describe('DeleteOrderController (E2E)', () => {
   let app: INestApplication
   let prisma: PrismaService
+  let jwtService: JwtService
   let accessToken: string
+  let courierAccessToken: string
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -20,28 +22,19 @@ describe('DeleteOrderController (E2E)', () => {
     await app.init()
 
     prisma = moduleRef.get(PrismaService)
+    jwtService = moduleRef.get(JwtService)
 
-    await prisma.admin.create({
-      data: {
-        name: 'Test Admin',
-        cpf: '11111111105',
-        password: await hash('password123', 8),
-      },
-    })
-
-    const loginResponse = await request(app.getHttpServer())
-      .post('/sessions/admin')
-      .send({ cpf: '11111111105', password: 'password123' })
-
-    accessToken = loginResponse.body.accessToken
+    accessToken = jwtService.sign({ sub: randomUUID(), role: 'ADMIN' })
+    courierAccessToken = jwtService.sign({ sub: randomUUID(), role: 'COURIER' })
   })
 
   afterAll(async () => {
     await prisma.order.deleteMany({
       where: { recipient: { email: 'delete-order@test.com' } },
     })
-    await prisma.recipient.deleteMany({ where: { email: 'delete-order@test.com' } })
-    await prisma.admin.deleteMany({ where: { cpf: '11111111105' } })
+    await prisma.recipient.deleteMany({
+      where: { email: 'delete-order@test.com' },
+    })
     await app.close()
   })
 
@@ -77,8 +70,18 @@ describe('DeleteOrderController (E2E)', () => {
     expect(response.statusCode).toBe(404)
   })
 
+  it('[DELETE] /orders/:id — should return 403 when authenticated as courier', async () => {
+    const response = await request(app.getHttpServer())
+      .delete(`/orders/${randomUUID()}`)
+      .set('Authorization', `Bearer ${courierAccessToken}`)
+
+    expect(response.statusCode).toBe(403)
+  })
+
   it('[DELETE] /orders/:id — should return 401 when not authenticated', async () => {
-    const response = await request(app.getHttpServer()).delete(`/orders/${randomUUID()}`)
+    const response = await request(app.getHttpServer()).delete(
+      `/orders/${randomUUID()}`,
+    )
 
     expect(response.statusCode).toBe(401)
   })

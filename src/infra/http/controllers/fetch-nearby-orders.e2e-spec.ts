@@ -1,6 +1,7 @@
+import { randomUUID } from 'node:crypto'
 import { INestApplication } from '@nestjs/common'
+import { JwtService } from '@nestjs/jwt'
 import { Test } from '@nestjs/testing'
-import { hash } from 'bcryptjs'
 import { AppModule } from 'src/app.module'
 import { PrismaService } from 'src/infra/database/prisma.service'
 import request from 'supertest'
@@ -8,7 +9,9 @@ import request from 'supertest'
 describe('FetchNearbyOrdersController (E2E)', () => {
   let app: INestApplication
   let prisma: PrismaService
+  let jwtService: JwtService
   let accessToken: string
+  let recipientId: string
 
   // São Paulo coordinates
   const SP_LATITUDE = -23.55052
@@ -27,42 +30,34 @@ describe('FetchNearbyOrdersController (E2E)', () => {
     await app.init()
 
     prisma = moduleRef.get(PrismaService)
+    jwtService = moduleRef.get(JwtService)
 
-    await prisma.admin.create({
-      data: {
-        name: 'Test Admin',
-        cpf: '11111111107',
-        password: await hash('password123', 8),
-      },
+    accessToken = jwtService.sign({ sub: randomUUID(), role: 'COURIER' })
+
+    const recipient = await prisma.recipient.create({
+      data: { name: 'Test Recipient', email: 'nearby-orders@test.com' },
     })
 
-    const loginResponse = await request(app.getHttpServer())
-      .post('/sessions/admin')
-      .send({ cpf: '11111111107', password: 'password123' })
-
-    accessToken = loginResponse.body.accessToken
+    recipientId = recipient.id
   })
 
   afterAll(async () => {
     await prisma.order.deleteMany({
       where: { recipient: { email: 'nearby-orders@test.com' } },
     })
-    await prisma.recipient.deleteMany({ where: { email: 'nearby-orders@test.com' } })
-    await prisma.admin.deleteMany({ where: { cpf: '11111111107' } })
+    await prisma.recipient.deleteMany({
+      where: { email: 'nearby-orders@test.com' },
+    })
     await app.close()
   })
 
   it('[GET] /orders/nearby — should return only WAITING orders within 50km', async () => {
-    const recipient = await prisma.recipient.create({
-      data: { name: 'Test Recipient', email: 'nearby-orders@test.com' },
-    })
-
     // Near order (São Paulo) — should appear
     await prisma.order.create({
       data: {
         title: 'Nearby Package',
         status: 'WAITING',
-        recipientId: recipient.id,
+        recipientId,
         deliveryLatitude: SP_LATITUDE,
         deliveryLongitude: SP_LONGITUDE,
       },
@@ -73,7 +68,7 @@ describe('FetchNearbyOrdersController (E2E)', () => {
       data: {
         title: 'Far Package',
         status: 'WAITING',
-        recipientId: recipient.id,
+        recipientId,
         deliveryLatitude: RJ_LATITUDE,
         deliveryLongitude: RJ_LONGITUDE,
       },

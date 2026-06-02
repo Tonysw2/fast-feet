@@ -1,7 +1,7 @@
-import { INestApplication } from '@nestjs/common'
-import { Test } from '@nestjs/testing'
-import { hash } from 'bcryptjs'
 import { randomUUID } from 'node:crypto'
+import { INestApplication } from '@nestjs/common'
+import { JwtService } from '@nestjs/jwt'
+import { Test } from '@nestjs/testing'
 import { AppModule } from 'src/app.module'
 import { PrismaService } from 'src/infra/database/prisma.service'
 import request from 'supertest'
@@ -9,7 +9,9 @@ import request from 'supertest'
 describe('EditOrderController (E2E)', () => {
   let app: INestApplication
   let prisma: PrismaService
+  let jwtService: JwtService
   let accessToken: string
+  let courierAccessToken: string
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -20,28 +22,19 @@ describe('EditOrderController (E2E)', () => {
     await app.init()
 
     prisma = moduleRef.get(PrismaService)
+    jwtService = moduleRef.get(JwtService)
 
-    await prisma.admin.create({
-      data: {
-        name: 'Test Admin',
-        cpf: '11111111104',
-        password: await hash('password123', 8),
-      },
-    })
-
-    const loginResponse = await request(app.getHttpServer())
-      .post('/sessions/admin')
-      .send({ cpf: '11111111104', password: 'password123' })
-
-    accessToken = loginResponse.body.accessToken
+    accessToken = jwtService.sign({ sub: randomUUID(), role: 'ADMIN' })
+    courierAccessToken = jwtService.sign({ sub: randomUUID(), role: 'COURIER' })
   })
 
   afterAll(async () => {
     await prisma.order.deleteMany({
       where: { recipient: { email: 'edit-order@test.com' } },
     })
-    await prisma.recipient.deleteMany({ where: { email: 'edit-order@test.com' } })
-    await prisma.admin.deleteMany({ where: { cpf: '11111111104' } })
+    await prisma.recipient.deleteMany({
+      where: { email: 'edit-order@test.com' },
+    })
     await app.close()
   })
 
@@ -76,23 +69,31 @@ describe('EditOrderController (E2E)', () => {
   })
 
   it('[PUT] /orders/:id — should return 404 when order does not exist', async () => {
-    const recipient = await prisma.recipient.create({
-      data: { name: 'Another Recipient', email: 'edit-order-2@test.com' },
-    })
-
     const response = await request(app.getHttpServer())
       .put(`/orders/${randomUUID()}`)
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
         title: 'Updated Title',
-        recipientId: recipient.id,
+        recipientId: randomUUID(),
         deliveryLatitude: -23.6,
         deliveryLongitude: -46.7,
       })
 
     expect(response.statusCode).toBe(404)
+  })
 
-    await prisma.recipient.delete({ where: { email: 'edit-order-2@test.com' } })
+  it('[PUT] /orders/:id — should return 403 when authenticated as courier', async () => {
+    const response = await request(app.getHttpServer())
+      .put(`/orders/${randomUUID()}`)
+      .set('Authorization', `Bearer ${courierAccessToken}`)
+      .send({
+        title: 'Updated Title',
+        recipientId: randomUUID(),
+        deliveryLatitude: -23.6,
+        deliveryLongitude: -46.7,
+      })
+
+    expect(response.statusCode).toBe(403)
   })
 
   it('[PUT] /orders/:id — should return 401 when not authenticated', async () => {
