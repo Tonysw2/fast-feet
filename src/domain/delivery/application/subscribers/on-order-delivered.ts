@@ -1,9 +1,11 @@
+import { Injectable } from '@nestjs/common'
 import { DomainEvents } from 'src/core/events/domain-events'
 import type { EventHandler } from 'src/core/events/event-handler'
-import type { SendNotificationUseCase } from 'src/domain/notification/application/use-cases/send-notification'
+import { SendNotificationUseCase } from 'src/domain/notification/application/use-cases/send-notification'
 import { OrderDeliveredEvent } from '../../enterprise/events/order-delivered-event'
-import type { RecipientsRepository } from '../repositories/recipients-repository'
+import { RecipientsRepository } from '../repositories/recipients-repository'
 
+@Injectable()
 export class OnOrderDelivered implements EventHandler {
   constructor(
     private readonly recipientsRepo: RecipientsRepository,
