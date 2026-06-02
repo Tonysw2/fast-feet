@@ -7,8 +7,10 @@ import {
 } from '@nestjs/common'
 import { ResourceNotFoundError } from 'src/domain/delivery/application/use-cases/errors/resource-not-found'
 import { GetCourierUseCase } from 'src/domain/delivery/application/use-cases/get-courier'
+import { Roles } from 'src/infra/auth/roles.decorator'
 
 @Controller('/couriers/:id')
+@Roles('ADMIN')
 export class GetCourierController {
   constructor(private readonly getCourier: GetCourierUseCase) {}
 

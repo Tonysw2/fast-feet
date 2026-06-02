@@ -8,8 +8,10 @@ import {
 } from '@nestjs/common'
 import { DeleteCourierUseCase } from 'src/domain/delivery/application/use-cases/delete-courier'
 import { ResourceNotFoundError } from 'src/domain/delivery/application/use-cases/errors/resource-not-found'
+import { Roles } from 'src/infra/auth/roles.decorator'
 
 @Controller('/couriers/:id')
+@Roles('ADMIN')
 export class DeleteCourierController {
   constructor(private readonly deleteCourier: DeleteCourierUseCase) {}
 

@@ -6,6 +6,7 @@ import { Env } from '../env/env'
 
 export interface JwtPayload {
   sub: string
+  role: 'ADMIN' | 'COURIER'
 }
 
 @Injectable()
@@ -23,6 +24,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: JwtPayload) {
     return {
       sub: payload.sub,
+      role: payload.role,
     }
   }
 }
