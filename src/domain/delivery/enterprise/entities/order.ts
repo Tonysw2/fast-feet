@@ -1,3 +1,4 @@
+import { Optional } from 'src/core/@types/optional'
 import { AggregateRoot } from 'src/core/entities/aggregate-root'
 import { UniqueEntityId } from 'src/core/value-objects/unique-entity-id'
 import { OrderDeliveredEvent } from '../events/order-delivered-event'
@@ -7,14 +8,14 @@ import { OrderWaitingEvent } from '../events/order-waiting-event'
 
 export type OrderStatus = 'WAITING' | 'PICKED_UP' | 'DELIVERED' | 'RETURNED'
 
-interface OrderProps {
+export interface OrderProps {
   title: string
   status: OrderStatus
   recipientId: UniqueEntityId
-  courierId: UniqueEntityId | null
-  photoUrl: string | null
   deliveryLatitude: number
   deliveryLongitude: number
+  photoUrl?: string | null
+  courierId?: UniqueEntityId | null
 }
 
 export class Order extends AggregateRoot<OrderProps> {
@@ -85,10 +86,13 @@ export class Order extends AggregateRoot<OrderProps> {
     this.addDomainEvent(new OrderReturnedEvent(this))
   }
 
-  static create(
-    props: Omit<OrderProps, 'status'> & { status?: OrderStatus },
-    id?: UniqueEntityId,
-  ) {
-    return new Order({ ...props, status: props.status ?? 'WAITING' }, id)
+  static create(props: Optional<OrderProps, 'status'>, id?: UniqueEntityId) {
+    return new Order(
+      {
+        ...props,
+        status: props.status ?? 'WAITING',
+      },
+      id,
+    )
   }
 }

@@ -2,7 +2,7 @@ import { Entity } from 'src/core/entities/entity'
 import { UniqueEntityId } from 'src/core/value-objects/unique-entity-id'
 import { CPF } from './value-objects/cpf'
 
-interface AdminProps {
+export interface AdminProps {
   name: string
   cpf: CPF
   password: string
