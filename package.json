@@ -13,6 +13,8 @@
     "start:prod": "node dist/main",
     "test": "vitest",
     "test:watch": "vitest --watch",
+    "test:e2e": "vitest --config vitest.config.e2e.ts",
+    "test:e2e:watch": "vitest --config vitest.config.e2e.ts --watch",
     "biome:fix": "biome check --write",
     "typecheck": "tsc --noEmit"
   },
