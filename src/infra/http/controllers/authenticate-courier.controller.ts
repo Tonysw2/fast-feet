@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common'
 import { AuthenticateCourierUseCase } from 'src/domain/delivery/application/use-cases/authenticate-courier'
 import { InvalidCredentialsError } from 'src/domain/delivery/application/use-cases/errors/invalid-credentials'
+import { IsPublic } from 'src/infra/auth/is-public.decorator'
 import { ZodValidationPipe } from 'src/infra/pipes/zod-validation-pipe'
 import z from 'zod'
 
@@ -20,6 +21,7 @@ const authenticateSchema = z.object({
 export type AuthenticateSchema = z.infer<typeof authenticateSchema>
 
 @Controller('/sessions')
+@IsPublic()
 export class AuthenticateCourierController {
   constructor(
     private readonly authenticateCourier: AuthenticateCourierUseCase,
