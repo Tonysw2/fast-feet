@@ -30,7 +30,10 @@ describe('OnOrderPickedUp', () => {
   })
 
   it('should send a notification when an order is picked up', async () => {
-    const recipient = Recipient.create({ name: 'John', email: 'john@example.com' })
+    const recipient = Recipient.create({
+      name: 'John',
+      email: 'john@example.com',
+    })
     recipientsRepo.items.push(recipient)
 
     const order = Order.create({

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaPg } from '@prisma/adapter-pg'
-import PG from 'pg'
 import { PrismaClient } from 'prisma/generated/client'
 import { EnvService } from '../env/env.service'
 

@@ -30,7 +30,10 @@ describe('OnOrderDelivered', () => {
   })
 
   it('should send a notification when an order is delivered', async () => {
-    const recipient = Recipient.create({ name: 'Jane', email: 'jane@example.com' })
+    const recipient = Recipient.create({
+      name: 'Jane',
+      email: 'jane@example.com',
+    })
     recipientsRepo.items.push(recipient)
 
     const courierId = new UniqueEntityId()

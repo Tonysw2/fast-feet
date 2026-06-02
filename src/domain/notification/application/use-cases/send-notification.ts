@@ -9,7 +9,10 @@ interface SendNotificationUseCaseRequest {
   content: string
 }
 
-type SendNotificationUseCaseResponse = Either<never, { notification: Notification }>
+type SendNotificationUseCaseResponse = Either<
+  never,
+  { notification: Notification }
+>
 
 export class SendNotificationUseCase {
   constructor(private readonly notificationsRepo: NotificationsRepository) {}

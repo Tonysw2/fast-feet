@@ -12,7 +12,8 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "test": "vitest",
-    "test:watch": "vitest --watch"
+    "test:watch": "vitest --watch",
+    "biome:fix": "biome check --write"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

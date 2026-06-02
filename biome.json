@@ -22,7 +22,18 @@
         "useImportType": "off"
       },
 
+      "correctness": {
+        "noUnusedImports": {
+          "fix": "safe",
+          "level": "error"
+        }
+      },
+
       "complexity": {
+        "useLiteralKeys": {
+          "level": "info",
+          "fix": "safe"
+        },
         "noStaticOnlyClass": "off"
       }
     }

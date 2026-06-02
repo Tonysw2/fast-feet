@@ -28,7 +28,7 @@ export class AuthenticateCourierController {
   @Post()
   @HttpCode(201)
   @UsePipes(new ZodValidationPipe(authenticateSchema))
-  async authenticate(@Body() body) {
+  async authenticate(@Body() body: AuthenticateSchema) {
     const { cpf, password } = body
 
     const result = await this.authenticateCourier.execute({ cpf, password })
@@ -47,8 +47,6 @@ export class AuthenticateCourierController {
       }
     }
 
-    return {
-      accessToken: 'access-token',
-    }
+    return { accessToken: result.value.accessToken }
   }
 }

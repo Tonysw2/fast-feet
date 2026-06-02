@@ -63,8 +63,7 @@ export class InMemoryOrdersRepository implements OrdersRepository {
     return this.items
       .filter(
         (o) =>
-          o.status === 'DELIVERED' &&
-          o.courierId?.toString() === courierId,
+          o.status === 'DELIVERED' && o.courierId?.toString() === courierId,
       )
       .slice((page - 1) * 20, page * 20)
   }

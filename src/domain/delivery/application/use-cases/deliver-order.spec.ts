@@ -1,9 +1,9 @@
 import { UniqueEntityId } from 'src/core/value-objects/unique-entity-id'
 import { Order } from 'src/domain/delivery/enterprise/entities/order'
 import { InMemoryOrdersRepository } from 'tests/repositories/in-memory-orders-repository'
+import { DeliverOrderUseCase } from './deliver-order'
 import { NotAllowedError } from './errors/not-allowed'
 import { ResourceNotFoundError } from './errors/resource-not-found'
-import { DeliverOrderUseCase } from './deliver-order'
 
 let ordersRepo: InMemoryOrdersRepository
 let sut: DeliverOrderUseCase
