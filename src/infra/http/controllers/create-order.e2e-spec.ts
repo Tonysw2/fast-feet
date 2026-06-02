@@ -7,6 +7,7 @@ import { PrismaService } from 'src/infra/database/prisma.service'
 import request from 'supertest'
 import { AdminFactory } from 'tests/factories/make-admin'
 import { CourierFactory } from 'tests/factories/make-courier'
+import { OrderFactory } from 'tests/factories/make-order'
 import { RecipientFactory } from 'tests/factories/make-recipient'
 
 describe('CreateOrderController (E2E)', () => {
@@ -16,6 +17,7 @@ describe('CreateOrderController (E2E)', () => {
   let recipientFactory: RecipientFactory
   let adminFactory: AdminFactory
   let courierFactory: CourierFactory
+  let orderFactory: OrderFactory
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -31,6 +33,7 @@ describe('CreateOrderController (E2E)', () => {
     recipientFactory = new RecipientFactory(prisma)
     adminFactory = new AdminFactory(prisma)
     courierFactory = new CourierFactory(prisma)
+    orderFactory = new OrderFactory(prisma)
   })
 
   afterAll(async () => {
@@ -40,6 +43,7 @@ describe('CreateOrderController (E2E)', () => {
   it('[POST] /orders — should return 201 with orderId on valid data', async () => {
     const recipient = await recipientFactory.makeRecipient()
     const admin = await adminFactory.makeAdmin()
+    const order = await orderFactory.makeOrder({ recipientId: recipient.id })
 
     const accessToken = await jwtService.signAsync({
       sub: admin.id.toString(),
@@ -50,10 +54,10 @@ describe('CreateOrderController (E2E)', () => {
       .post('/orders')
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
-        title: 'Test Package',
-        recipientId: recipient.id.toString(),
-        deliveryLatitude: -23.55052,
-        deliveryLongitude: -46.633309,
+        title: order.title,
+        recipientId: order.recipientId.toString(),
+        deliveryLatitude: order.deliveryLatitude,
+        deliveryLongitude: order.deliveryLongitude,
       })
 
     expect(response.statusCode).toBe(201)

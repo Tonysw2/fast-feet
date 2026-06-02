@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common'
 import { Either, left, right } from 'src/core/either'
 import { UniqueEntityId } from 'src/core/value-objects/unique-entity-id'
 import { Order } from '../../enterprise/entities/order'
@@ -17,6 +18,7 @@ type CreateOrderUseCaseResponse = Either<
   { order: Order }
 >
 
+@Injectable()
 export class CreateOrderUseCase {
   constructor(
     private readonly ordersRepo: OrdersRepository,
