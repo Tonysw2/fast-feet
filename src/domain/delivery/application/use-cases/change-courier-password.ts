@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common'
 import { HashGenerator } from 'src/core/cryptography/hash-generator'
 import { Either, left, right } from 'src/core/either'
 import { CouriersRepository } from '../repositories/couriers-repository'
@@ -13,6 +14,7 @@ type ChangeCourierPasswordUseCaseResponse = Either<
   object
 >
 
+@Injectable()
 export class ChangeCourierPasswordUseCase {
   constructor(
     private readonly couriersRepo: CouriersRepository,

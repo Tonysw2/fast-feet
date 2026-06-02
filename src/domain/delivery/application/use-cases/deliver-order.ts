@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common'
 import { Either, left, right } from 'src/core/either'
 import { Order } from '../../enterprise/entities/order'
 import { OrdersRepository } from '../repositories/orders-repository'
@@ -15,6 +16,7 @@ type DeliverOrderUseCaseResponse = Either<
   { order: Order }
 >
 
+@Injectable()
 export class DeliverOrderUseCase {
   constructor(private readonly ordersRepo: OrdersRepository) {}
 

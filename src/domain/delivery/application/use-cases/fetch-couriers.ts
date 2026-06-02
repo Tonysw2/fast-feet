@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common'
 import { Either, right } from 'src/core/either'
 import { Courier } from '../../enterprise/entities/couriers'
 import { CouriersRepository } from '../repositories/couriers-repository'
@@ -8,6 +9,7 @@ interface FetchCouriersUseCaseRequest {
 
 type FetchCouriersUseCaseResponse = Either<never, { couriers: Courier[] }>
 
+@Injectable()
 export class FetchCouriersUseCase {
   constructor(private readonly couriersRepo: CouriersRepository) {}
 

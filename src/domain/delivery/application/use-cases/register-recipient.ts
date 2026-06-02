@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common'
 import { Either, left, right } from 'src/core/either'
 import { Recipient } from '../../enterprise/entities/recipient'
 import { RecipientsRepository } from '../repositories/recipients-repository'
@@ -13,6 +14,7 @@ type RegisterRecipientUseCaseResponse = Either<
   { recipient: Recipient }
 >
 
+@Injectable()
 export class RegisterRecipientUseCase {
   constructor(private readonly recipientsRepo: RecipientsRepository) {}
 

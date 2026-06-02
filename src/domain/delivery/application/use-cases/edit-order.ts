@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common'
 import { Either, left, right } from 'src/core/either'
 import { UniqueEntityId } from 'src/core/value-objects/unique-entity-id'
 import { Order } from '../../enterprise/entities/order'
@@ -14,6 +15,7 @@ interface EditOrderUseCaseRequest {
 
 type EditOrderUseCaseResponse = Either<ResourceNotFoundError, { order: Order }>
 
+@Injectable()
 export class EditOrderUseCase {
   constructor(private readonly ordersRepo: OrdersRepository) {}
 

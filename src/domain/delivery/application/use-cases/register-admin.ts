@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common'
 import { HashGenerator } from 'src/core/cryptography/hash-generator'
 import { Either, left, right } from 'src/core/either'
 import { Admin } from '../../enterprise/entities/admin'
@@ -16,6 +17,7 @@ type RegisterAdminUseCaseResponse = Either<
   { admin: Admin }
 >
 
+@Injectable()
 export class RegisterAdminUseCase {
   constructor(
     private readonly hasher: HashGenerator,
