@@ -10,8 +10,10 @@ import {
 import { NotAllowedError } from 'src/domain/delivery/application/use-cases/errors/not-allowed'
 import { ResourceNotFoundError } from 'src/domain/delivery/application/use-cases/errors/resource-not-found'
 import { MarkOrderAsWaitingUseCase } from 'src/domain/delivery/application/use-cases/mark-order-as-waiting'
+import { Roles } from 'src/infra/auth/roles.decorator'
 
 @Controller('/orders/:id/waiting')
+@Roles('ADMIN')
 export class MarkOrderAsWaitingController {
   constructor(private readonly markOrderAsWaiting: MarkOrderAsWaitingUseCase) {}
 

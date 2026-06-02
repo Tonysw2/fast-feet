@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common'
 import { CreateOrderUseCase } from 'src/domain/delivery/application/use-cases/create-order'
 import { ResourceNotFoundError } from 'src/domain/delivery/application/use-cases/errors/resource-not-found'
+import { Roles } from 'src/infra/auth/roles.decorator'
 import { ZodValidationPipe } from 'src/infra/pipes/zod-validation-pipe'
 import z from 'zod'
 
@@ -22,6 +23,7 @@ const schema = z.object({
 type Schema = z.infer<typeof schema>
 
 @Controller('/orders')
+@Roles('ADMIN')
 export class CreateOrderController {
   constructor(private readonly createOrder: CreateOrderUseCase) {}
 

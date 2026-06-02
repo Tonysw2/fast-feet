@@ -8,8 +8,10 @@ import {
 } from '@nestjs/common'
 import { DeleteOrderUseCase } from 'src/domain/delivery/application/use-cases/delete-order'
 import { ResourceNotFoundError } from 'src/domain/delivery/application/use-cases/errors/resource-not-found'
+import { Roles } from 'src/infra/auth/roles.decorator'
 
 @Controller('/orders/:id')
+@Roles('ADMIN')
 export class DeleteOrderController {
   constructor(private readonly deleteOrder: DeleteOrderUseCase) {}
 

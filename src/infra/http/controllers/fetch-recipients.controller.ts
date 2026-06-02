@@ -1,8 +1,10 @@
 import { Controller, Get, Query } from '@nestjs/common'
 import { FetchRecipientsUseCase } from 'src/domain/delivery/application/use-cases/fetch-recipients'
+import { Roles } from 'src/infra/auth/roles.decorator'
 import z from 'zod'
 
 @Controller('/recipients')
+@Roles('ADMIN')
 export class FetchRecipientsController {
   constructor(private readonly fetchRecipients: FetchRecipientsUseCase) {}
 

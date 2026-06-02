@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common'
 import { EditCourierUseCase } from 'src/domain/delivery/application/use-cases/edit-courier'
 import { ResourceNotFoundError } from 'src/domain/delivery/application/use-cases/errors/resource-not-found'
+import { Roles } from 'src/infra/auth/roles.decorator'
 import { ZodValidationPipe } from 'src/infra/pipes/zod-validation-pipe'
 import z from 'zod'
 
@@ -17,6 +18,7 @@ const schema = z.object({ name: z.string() })
 type Schema = z.infer<typeof schema>
 
 @Controller('/couriers/:id')
+@Roles('ADMIN')
 export class EditCourierController {
   constructor(private readonly editCourier: EditCourierUseCase) {}
 

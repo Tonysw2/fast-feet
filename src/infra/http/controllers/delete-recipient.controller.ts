@@ -8,8 +8,10 @@ import {
 } from '@nestjs/common'
 import { DeleteRecipientUseCase } from 'src/domain/delivery/application/use-cases/delete-recipient'
 import { ResourceNotFoundError } from 'src/domain/delivery/application/use-cases/errors/resource-not-found'
+import { Roles } from 'src/infra/auth/roles.decorator'
 
 @Controller('/recipients/:id')
+@Roles('ADMIN')
 export class DeleteRecipientController {
   constructor(private readonly deleteRecipient: DeleteRecipientUseCase) {}
 
