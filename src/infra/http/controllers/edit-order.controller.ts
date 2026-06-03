@@ -6,7 +6,6 @@ import {
   NotFoundException,
   Param,
   Put,
-  UsePipes,
 } from '@nestjs/common'
 import { EditOrderUseCase } from 'src/domain/delivery/application/use-cases/edit-order'
 import { ResourceNotFoundError } from 'src/domain/delivery/application/use-cases/errors/resource-not-found'
@@ -30,8 +29,10 @@ export class EditOrderController {
 
   @Put()
   @HttpCode(204)
-  @UsePipes(new ZodValidationPipe(schema))
-  async handle(@Param('id') id: string, @Body() body: Schema) {
+  async handle(
+    @Param('id') id: string,
+    @Body(new ZodValidationPipe(schema)) body: Schema,
+  ) {
     const result = await this.editOrder.execute({ orderId: id, ...body })
 
     if (result.isLeft()) {

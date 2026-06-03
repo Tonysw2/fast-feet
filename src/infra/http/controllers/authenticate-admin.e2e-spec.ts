@@ -41,7 +41,10 @@ describe('AuthenticateAdminController (E2E)', () => {
       })
 
     expect(response.statusCode).toBe(201)
-    expect(response.body).toHaveProperty('accessToken')
-    expect(typeof response.body.accessToken).toBe('string')
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        accessToken: expect.any(String),
+      }),
+    )
   })
 })

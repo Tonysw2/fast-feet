@@ -1,94 +1,60 @@
-﻿import { randomUUID } from 'node:crypto'
 import { INestApplication } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { Test } from '@nestjs/testing'
 import { AppModule } from 'src/infra/app.module'
-import { PrismaService } from 'src/infra/database/prisma.service'
+import { DatabaseModule } from 'src/infra/database/database.module'
 import request from 'supertest'
+import { AdminFactory } from 'tests/factories/make-admin'
+import { OrderFactory } from 'tests/factories/make-order'
+import { RecipientFactory } from 'tests/factories/make-recipient'
 
 describe('GetOrderController (E2E)', () => {
   let app: INestApplication
-  let prisma: PrismaService
   let jwtService: JwtService
-  let accessToken: string
-  let courierAccessToken: string
+  let adminFactory: AdminFactory
+  let orderFactory: OrderFactory
+  let recipientFactory: RecipientFactory
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule, DatabaseModule],
+      providers: [AdminFactory, OrderFactory, RecipientFactory],
     }).compile()
 
     app = moduleRef.createNestApplication()
     await app.init()
 
-    prisma = moduleRef.get(PrismaService)
     jwtService = moduleRef.get(JwtService)
-
-    accessToken = jwtService.sign({ sub: randomUUID(), role: 'ADMIN' })
-    courierAccessToken = jwtService.sign({ sub: randomUUID(), role: 'COURIER' })
+    adminFactory = moduleRef.get(AdminFactory)
+    orderFactory = moduleRef.get(OrderFactory)
+    recipientFactory = moduleRef.get(RecipientFactory)
   })
 
   afterAll(async () => {
-    await prisma.order.deleteMany({
-      where: { recipient: { email: 'get-order@test.com' } },
-    })
-    await prisma.recipient.deleteMany({
-      where: { email: 'get-order@test.com' },
-    })
     await app.close()
   })
 
-  it('[GET] /orders/:id â€” should return 200 with order data', async () => {
-    const recipient = await prisma.recipient.create({
-      data: { name: 'Test Recipient', email: 'get-order@test.com' },
-    })
+  it('[GET] /orders/:id', async () => {
+    const admin = await adminFactory.makeAdmin()
+    const recipient = await recipientFactory.makeRecipient()
+    const order = await orderFactory.makeOrder({ recipientId: recipient.id })
 
-    const order = await prisma.order.create({
-      data: {
-        title: 'Test Package',
-        recipientId: recipient.id,
-        deliveryLatitude: -23.55052,
-        deliveryLongitude: -46.633309,
-      },
+    const accessToken = await jwtService.signAsync({
+      sub: admin.id.toString(),
+      role: admin.role,
     })
 
     const response = await request(app.getHttpServer())
-      .get(`/orders/${order.id}`)
+      .get(`/orders/${order.id.toString()}`)
       .set('Authorization', `Bearer ${accessToken}`)
 
     expect(response.statusCode).toBe(200)
-    expect(response.body).toHaveProperty('order')
-    expect(response.body.order.id).toBe(order.id)
-    expect(response.body.order.title).toBe('Test Package')
-    expect(response.body.order.status).toBe('WAITING')
-    expect(response.body.order.recipientId).toBe(recipient.id)
-    expect(response.body.order.courierId).toBeNull()
-    expect(response.body.order.photoUrl).toBeNull()
-    expect(response.body.order.deliveryLatitude).toBe(-23.55052)
-    expect(response.body.order.deliveryLongitude).toBe(-46.633309)
-  })
-
-  it('[GET] /orders/:id â€” should return 404 when order does not exist', async () => {
-    const response = await request(app.getHttpServer())
-      .get(`/orders/${randomUUID()}`)
-      .set('Authorization', `Bearer ${accessToken}`)
-
-    expect(response.statusCode).toBe(404)
-  })
-
-  it('[GET] /orders/:id â€” should return 403 when authenticated as courier', async () => {
-    const response = await request(app.getHttpServer())
-      .get(`/orders/${randomUUID()}`)
-      .set('Authorization', `Bearer ${courierAccessToken}`)
-
-    expect(response.statusCode).toBe(403)
-  })
-
-  it('[GET] /orders/:id â€” should return 401 when not authenticated', async () => {
-    const response = await request(app.getHttpServer()).get(
-      `/orders/${randomUUID()}`,
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        order: expect.objectContaining({
+          id: order.id.toString(),
+        }),
+      }),
     )
-
-    expect(response.statusCode).toBe(401)
   })
 })

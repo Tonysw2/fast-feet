@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { Prisma } from 'prisma/generated/client'
 import { DomainEvents } from 'src/core/events/domain-events'
 import {
   FindManyNearbyParams,
@@ -33,6 +34,9 @@ export class PrismaOrdersRepository implements OrdersRepository {
     page,
   }: FindManyNearbyParams): Promise<Order[]> {
     const offset = (page - 1) * PAGE_SIZE
+    const schema =
+      new URL(process.env.DATABASE_URL!).searchParams.get('schema') ?? 'public'
+    const ordersTable = Prisma.raw(`"${schema}"."orders"`)
 
     const rows = await this.prisma.$queryRaw<
       Array<{
@@ -50,7 +54,7 @@ export class PrismaOrdersRepository implements OrdersRepository {
     >`
       SELECT id, title, status, "photoUrl", "deliveryLatitude", "deliveryLongitude",
              "recipientId", "courierId", "createdAt", "updatedAt"
-      FROM orders
+      FROM ${ordersTable}
       WHERE status = 'WAITING'
         AND (
           6371 * acos(

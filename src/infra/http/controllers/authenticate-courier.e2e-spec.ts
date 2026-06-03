@@ -38,7 +38,10 @@ describe('AuthenticateCourierController (E2E)', () => {
       .send({ cpf: '98765432101', password: 'password123' })
 
     expect(response.statusCode).toBe(201)
-    expect(response.body).toHaveProperty('accessToken')
-    expect(typeof response.body.accessToken).toBe('string')
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        accessToken: expect.any(String),
+      }),
+    )
   })
 })

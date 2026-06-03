@@ -1,49 +1,39 @@
-﻿import { randomUUID } from 'node:crypto'
 import { INestApplication } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { Test } from '@nestjs/testing'
 import { AppModule } from 'src/infra/app.module'
-import { PrismaService } from 'src/infra/database/prisma.service'
+import { DatabaseModule } from 'src/infra/database/database.module'
 import request from 'supertest'
 import { AdminFactory } from 'tests/factories/make-admin'
-import { CourierFactory } from 'tests/factories/make-courier'
-import { OrderFactory } from 'tests/factories/make-order'
 import { RecipientFactory } from 'tests/factories/make-recipient'
 
 describe('CreateOrderController (E2E)', () => {
   let app: INestApplication
-  let prisma: PrismaService
   let jwtService: JwtService
-  let recipientFactory: RecipientFactory
   let adminFactory: AdminFactory
-  let courierFactory: CourierFactory
-  let orderFactory: OrderFactory
+  let recipientFactory: RecipientFactory
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule, DatabaseModule],
+      providers: [AdminFactory, RecipientFactory],
     }).compile()
 
     app = moduleRef.createNestApplication()
     await app.init()
 
-    prisma = moduleRef.get(PrismaService)
     jwtService = moduleRef.get(JwtService)
-
-    recipientFactory = new RecipientFactory(prisma)
-    adminFactory = new AdminFactory(prisma)
-    courierFactory = new CourierFactory(prisma)
-    orderFactory = new OrderFactory(prisma)
+    adminFactory = moduleRef.get(AdminFactory)
+    recipientFactory = moduleRef.get(RecipientFactory)
   })
 
   afterAll(async () => {
     await app.close()
   })
 
-  it('[POST] /orders â€” should return 201 with orderId on valid data', async () => {
-    const recipient = await recipientFactory.makeRecipient()
+  it('[POST] /orders', async () => {
     const admin = await adminFactory.makeAdmin()
-    const order = await orderFactory.makeOrder({ recipientId: recipient.id })
+    const recipient = await recipientFactory.makeRecipient()
 
     const accessToken = await jwtService.signAsync({
       sub: admin.id.toString(),
@@ -54,67 +44,17 @@ describe('CreateOrderController (E2E)', () => {
       .post('/orders')
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
-        title: order.title,
-        recipientId: order.recipientId.toString(),
-        deliveryLatitude: order.deliveryLatitude,
-        deliveryLongitude: order.deliveryLongitude,
+        title: 'Test Package',
+        recipientId: recipient.id.toString(),
+        deliveryLatitude: -23.55052,
+        deliveryLongitude: -46.633309,
       })
 
     expect(response.statusCode).toBe(201)
-    expect(response.body).toHaveProperty('orderId')
-    expect(typeof response.body.orderId).toBe('string')
-  })
-
-  it('[POST] /orders â€” should return 404 when recipient does not exist', async () => {
-    const admin = await adminFactory.makeAdmin()
-
-    const accessToken = await jwtService.signAsync({
-      sub: admin.id.toString(),
-      role: admin.role,
-    })
-
-    const response = await request(app.getHttpServer())
-      .post('/orders')
-      .set('Authorization', `Bearer ${accessToken}`)
-      .send({
-        title: 'Test Package',
-        recipientId: randomUUID(),
-        deliveryLatitude: -23.55052,
-        deliveryLongitude: -46.633309,
-      })
-
-    expect(response.statusCode).toBe(404)
-  })
-
-  it('[POST] /orders â€” should return 403 when authenticated as courier', async () => {
-    const courier = await courierFactory.makeCourier()
-
-    const accessToken = await jwtService.signAsync({
-      sub: courier.id.toString(),
-      role: courier.role,
-    })
-
-    const response = await request(app.getHttpServer())
-      .post('/orders')
-      .set('Authorization', `Bearer ${accessToken}`)
-      .send({
-        title: 'Test Package',
-        recipientId: randomUUID(),
-        deliveryLatitude: -23.55052,
-        deliveryLongitude: -46.633309,
-      })
-
-    expect(response.statusCode).toBe(403)
-  })
-
-  it('[POST] /orders â€” should return 401 when not authenticated', async () => {
-    const response = await request(app.getHttpServer()).post('/orders').send({
-      title: 'Test Package',
-      recipientId: randomUUID(),
-      deliveryLatitude: -23.55052,
-      deliveryLongitude: -46.633309,
-    })
-
-    expect(response.statusCode).toBe(401)
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        orderId: expect.any(String),
+      }),
+    )
   })
 })

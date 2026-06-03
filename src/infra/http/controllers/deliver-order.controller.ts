@@ -7,7 +7,6 @@ import {
   NotFoundException,
   Param,
   Patch,
-  UsePipes,
 } from '@nestjs/common'
 import { DeliverOrderUseCase } from 'src/domain/delivery/application/use-cases/deliver-order'
 import { NotAllowedError } from 'src/domain/delivery/application/use-cases/errors/not-allowed'
@@ -28,10 +27,9 @@ export class DeliverOrderController {
 
   @Patch()
   @HttpCode(204)
-  @UsePipes(new ZodValidationPipe(schema))
   async handle(
     @Param('id') id: string,
-    @Body() body: Schema,
+    @Body(new ZodValidationPipe(schema)) body: Schema,
     @CurrentUser() user: UserPayload,
   ) {
     const result = await this.deliverOrder.execute({

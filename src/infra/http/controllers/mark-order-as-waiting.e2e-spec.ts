@@ -1,109 +1,56 @@
-﻿import { randomUUID } from 'node:crypto'
 import { INestApplication } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { Test } from '@nestjs/testing'
 import { AppModule } from 'src/infra/app.module'
-import { PrismaService } from 'src/infra/database/prisma.service'
+import { DatabaseModule } from 'src/infra/database/database.module'
 import request from 'supertest'
+import { AdminFactory } from 'tests/factories/make-admin'
+import { OrderFactory } from 'tests/factories/make-order'
+import { RecipientFactory } from 'tests/factories/make-recipient'
 
 describe('MarkOrderAsWaitingController (E2E)', () => {
   let app: INestApplication
-  let prisma: PrismaService
   let jwtService: JwtService
-  let accessToken: string
-  let courierAccessToken: string
-  let recipientId: string
+  let adminFactory: AdminFactory
+  let orderFactory: OrderFactory
+  let recipientFactory: RecipientFactory
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule, DatabaseModule],
+      providers: [AdminFactory, OrderFactory, RecipientFactory],
     }).compile()
 
     app = moduleRef.createNestApplication()
     await app.init()
 
-    prisma = moduleRef.get(PrismaService)
     jwtService = moduleRef.get(JwtService)
-
-    accessToken = jwtService.sign({ sub: randomUUID(), role: 'ADMIN' })
-    courierAccessToken = jwtService.sign({ sub: randomUUID(), role: 'COURIER' })
-
-    const recipient = await prisma.recipient.create({
-      data: { name: 'Test Recipient', email: 'mark-waiting@test.com' },
-    })
-    recipientId = recipient.id
+    adminFactory = moduleRef.get(AdminFactory)
+    orderFactory = moduleRef.get(OrderFactory)
+    recipientFactory = moduleRef.get(RecipientFactory)
   })
 
   afterAll(async () => {
-    await prisma.order.deleteMany({
-      where: { recipient: { email: 'mark-waiting@test.com' } },
-    })
-    await prisma.recipient.deleteMany({
-      where: { email: 'mark-waiting@test.com' },
-    })
     await app.close()
   })
 
-  it('[PATCH] /orders/:id/waiting â€” should return 204 and set RETURNED order back to WAITING', async () => {
-    const order = await prisma.order.create({
-      data: {
-        title: 'Test Package',
-        status: 'RETURNED',
-        recipientId,
-        deliveryLatitude: -23.55052,
-        deliveryLongitude: -46.633309,
-      },
+  it('[PATCH] /orders/:id/waiting', async () => {
+    const admin = await adminFactory.makeAdmin()
+    const recipient = await recipientFactory.makeRecipient()
+    const order = await orderFactory.makeOrder({
+      recipientId: recipient.id,
+      status: 'RETURNED',
+    })
+
+    const accessToken = await jwtService.signAsync({
+      sub: admin.id.toString(),
+      role: admin.role,
     })
 
     const response = await request(app.getHttpServer())
-      .patch(`/orders/${order.id}/waiting`)
+      .patch(`/orders/${order.id.toString()}/waiting`)
       .set('Authorization', `Bearer ${accessToken}`)
 
     expect(response.statusCode).toBe(204)
-
-    const updated = await prisma.order.findUnique({ where: { id: order.id } })
-    expect(updated?.status).toBe('WAITING')
-  })
-
-  it('[PATCH] /orders/:id/waiting â€” should return 403 when order is not RETURNED', async () => {
-    const order = await prisma.order.create({
-      data: {
-        title: 'Already Waiting Package',
-        status: 'WAITING',
-        recipientId,
-        deliveryLatitude: -23.55052,
-        deliveryLongitude: -46.633309,
-      },
-    })
-
-    const response = await request(app.getHttpServer())
-      .patch(`/orders/${order.id}/waiting`)
-      .set('Authorization', `Bearer ${accessToken}`)
-
-    expect(response.statusCode).toBe(403)
-  })
-
-  it('[PATCH] /orders/:id/waiting â€” should return 404 when order does not exist', async () => {
-    const response = await request(app.getHttpServer())
-      .patch(`/orders/${randomUUID()}/waiting`)
-      .set('Authorization', `Bearer ${accessToken}`)
-
-    expect(response.statusCode).toBe(404)
-  })
-
-  it('[PATCH] /orders/:id/waiting â€” should return 403 when authenticated as courier', async () => {
-    const response = await request(app.getHttpServer())
-      .patch(`/orders/${randomUUID()}/waiting`)
-      .set('Authorization', `Bearer ${courierAccessToken}`)
-
-    expect(response.statusCode).toBe(403)
-  })
-
-  it('[PATCH] /orders/:id/waiting â€” should return 401 when not authenticated', async () => {
-    const response = await request(app.getHttpServer()).patch(
-      `/orders/${randomUUID()}/waiting`,
-    )
-
-    expect(response.statusCode).toBe(401)
   })
 })

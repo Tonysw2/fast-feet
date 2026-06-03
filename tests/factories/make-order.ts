@@ -21,6 +21,7 @@ export const makeOrder = (
       deliveryLatitude: override.deliveryLatitude ?? faker.location.latitude(),
       deliveryLongitude:
         override.deliveryLongitude ?? faker.location.longitude(),
+      status: override.status,
     },
     id,
   )

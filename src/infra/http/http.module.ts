@@ -102,6 +102,7 @@ import { ReturnOrderController } from './controllers/return-order.controller'
     DeleteRecipientController,
     CreateOrderController,
     FetchOrdersController,
+    FetchNearbyOrdersController,
     GetOrderController,
     EditOrderController,
     DeleteOrderController,
@@ -109,7 +110,6 @@ import { ReturnOrderController } from './controllers/return-order.controller'
     PickUpOrderController,
     DeliverOrderController,
     ReturnOrderController,
-    FetchNearbyOrdersController,
     FetchCourierDeliveriesController,
   ],
 })
