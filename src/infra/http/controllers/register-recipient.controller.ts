@@ -10,7 +10,7 @@ import {
 import { RecipientAlreadyExistsError } from 'src/domain/delivery/application/use-cases/errors/recipient-already-exists'
 import { RegisterRecipientUseCase } from 'src/domain/delivery/application/use-cases/register-recipient'
 import { Roles } from 'src/infra/auth/roles.decorator'
-import { ZodValidationPipe } from 'src/infra/pipes/zod-validation-pipe'
+import { ZodValidationPipe } from 'src/infra/http/pipes/zod-validation-pipe'
 import z from 'zod'
 
 const schema = z.object({

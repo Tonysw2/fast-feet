@@ -15,7 +15,7 @@ import {
   CurrentUser,
   type UserPayload,
 } from 'src/infra/auth/current-user.decorator'
-import { ZodValidationPipe } from 'src/infra/pipes/zod-validation-pipe'
+import { ZodValidationPipe } from 'src/infra/http/pipes/zod-validation-pipe'
 import z from 'zod'
 
 const schema = z.object({ photoUrl: z.string().url() })

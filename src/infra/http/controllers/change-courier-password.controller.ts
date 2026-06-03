@@ -10,7 +10,7 @@ import {
 import { ChangeCourierPasswordUseCase } from 'src/domain/delivery/application/use-cases/change-courier-password'
 import { ResourceNotFoundError } from 'src/domain/delivery/application/use-cases/errors/resource-not-found'
 import { Roles } from 'src/infra/auth/roles.decorator'
-import { ZodValidationPipe } from 'src/infra/pipes/zod-validation-pipe'
+import { ZodValidationPipe } from 'src/infra/http/pipes/zod-validation-pipe'
 import z from 'zod'
 
 const schema = z.object({ password: z.string().min(6) })
