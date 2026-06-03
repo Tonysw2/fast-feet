@@ -1,8 +1,8 @@
-import { randomUUID } from 'node:crypto'
+﻿import { randomUUID } from 'node:crypto'
 import { INestApplication } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { Test } from '@nestjs/testing'
-import { AppModule } from 'src/app.module'
+import { AppModule } from 'src/infra/app.module'
 import { PrismaService } from 'src/infra/database/prisma.service'
 import request from 'supertest'
 import { AdminFactory } from 'tests/factories/make-admin'
@@ -40,7 +40,7 @@ describe('CreateOrderController (E2E)', () => {
     await app.close()
   })
 
-  it('[POST] /orders — should return 201 with orderId on valid data', async () => {
+  it('[POST] /orders â€” should return 201 with orderId on valid data', async () => {
     const recipient = await recipientFactory.makeRecipient()
     const admin = await adminFactory.makeAdmin()
     const order = await orderFactory.makeOrder({ recipientId: recipient.id })
@@ -65,7 +65,7 @@ describe('CreateOrderController (E2E)', () => {
     expect(typeof response.body.orderId).toBe('string')
   })
 
-  it('[POST] /orders — should return 404 when recipient does not exist', async () => {
+  it('[POST] /orders â€” should return 404 when recipient does not exist', async () => {
     const admin = await adminFactory.makeAdmin()
 
     const accessToken = await jwtService.signAsync({
@@ -86,7 +86,7 @@ describe('CreateOrderController (E2E)', () => {
     expect(response.statusCode).toBe(404)
   })
 
-  it('[POST] /orders — should return 403 when authenticated as courier', async () => {
+  it('[POST] /orders â€” should return 403 when authenticated as courier', async () => {
     const courier = await courierFactory.makeCourier()
 
     const accessToken = await jwtService.signAsync({
@@ -107,7 +107,7 @@ describe('CreateOrderController (E2E)', () => {
     expect(response.statusCode).toBe(403)
   })
 
-  it('[POST] /orders — should return 401 when not authenticated', async () => {
+  it('[POST] /orders â€” should return 401 when not authenticated', async () => {
     const response = await request(app.getHttpServer()).post('/orders').send({
       title: 'Test Package',
       recipientId: randomUUID(),

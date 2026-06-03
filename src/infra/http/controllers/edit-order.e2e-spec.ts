@@ -1,8 +1,8 @@
-import { randomUUID } from 'node:crypto'
+﻿import { randomUUID } from 'node:crypto'
 import { INestApplication } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { Test } from '@nestjs/testing'
-import { AppModule } from 'src/app.module'
+import { AppModule } from 'src/infra/app.module'
 import { PrismaService } from 'src/infra/database/prisma.service'
 import request from 'supertest'
 
@@ -38,7 +38,7 @@ describe('EditOrderController (E2E)', () => {
     await app.close()
   })
 
-  it('[PUT] /orders/:id — should return 204 and update the order', async () => {
+  it('[PUT] /orders/:id â€” should return 204 and update the order', async () => {
     const recipient = await prisma.recipient.create({
       data: { name: 'Test Recipient', email: 'edit-order@test.com' },
     })
@@ -68,7 +68,7 @@ describe('EditOrderController (E2E)', () => {
     expect(updated?.title).toBe('Updated Title')
   })
 
-  it('[PUT] /orders/:id — should return 404 when order does not exist', async () => {
+  it('[PUT] /orders/:id â€” should return 404 when order does not exist', async () => {
     const response = await request(app.getHttpServer())
       .put(`/orders/${randomUUID()}`)
       .set('Authorization', `Bearer ${accessToken}`)
@@ -82,7 +82,7 @@ describe('EditOrderController (E2E)', () => {
     expect(response.statusCode).toBe(404)
   })
 
-  it('[PUT] /orders/:id — should return 403 when authenticated as courier', async () => {
+  it('[PUT] /orders/:id â€” should return 403 when authenticated as courier', async () => {
     const response = await request(app.getHttpServer())
       .put(`/orders/${randomUUID()}`)
       .set('Authorization', `Bearer ${courierAccessToken}`)
@@ -96,7 +96,7 @@ describe('EditOrderController (E2E)', () => {
     expect(response.statusCode).toBe(403)
   })
 
-  it('[PUT] /orders/:id — should return 401 when not authenticated', async () => {
+  it('[PUT] /orders/:id â€” should return 401 when not authenticated', async () => {
     const response = await request(app.getHttpServer())
       .put(`/orders/${randomUUID()}`)
       .send({

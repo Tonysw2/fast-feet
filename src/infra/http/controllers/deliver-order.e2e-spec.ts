@@ -1,8 +1,8 @@
-import { randomUUID } from 'node:crypto'
+﻿import { randomUUID } from 'node:crypto'
 import { INestApplication } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { Test } from '@nestjs/testing'
-import { AppModule } from 'src/app.module'
+import { AppModule } from 'src/infra/app.module'
 import { PrismaService } from 'src/infra/database/prisma.service'
 import request from 'supertest'
 
@@ -55,7 +55,7 @@ describe('DeliverOrderController (E2E)', () => {
     await app.close()
   })
 
-  it('[PATCH] /orders/:id/deliver — should return 204 when courier delivers their own order', async () => {
+  it('[PATCH] /orders/:id/deliver â€” should return 204 when courier delivers their own order', async () => {
     const order = await prisma.order.create({
       data: {
         title: 'Test Package',
@@ -79,7 +79,7 @@ describe('DeliverOrderController (E2E)', () => {
     expect(updated?.photoUrl).toBe('https://example.com/photo.jpg')
   })
 
-  it('[PATCH] /orders/:id/deliver — should return 403 when a different courier tries to deliver', async () => {
+  it('[PATCH] /orders/:id/deliver â€” should return 403 when a different courier tries to deliver', async () => {
     const order = await prisma.order.create({
       data: {
         title: 'Another Package',
@@ -99,7 +99,7 @@ describe('DeliverOrderController (E2E)', () => {
     expect(response.statusCode).toBe(403)
   })
 
-  it('[PATCH] /orders/:id/deliver — should return 404 when order does not exist', async () => {
+  it('[PATCH] /orders/:id/deliver â€” should return 404 when order does not exist', async () => {
     const response = await request(app.getHttpServer())
       .patch(`/orders/${randomUUID()}/deliver`)
       .set('Authorization', `Bearer ${courierAccessToken}`)
@@ -108,7 +108,7 @@ describe('DeliverOrderController (E2E)', () => {
     expect(response.statusCode).toBe(404)
   })
 
-  it('[PATCH] /orders/:id/deliver — should return 401 when not authenticated', async () => {
+  it('[PATCH] /orders/:id/deliver â€” should return 401 when not authenticated', async () => {
     const response = await request(app.getHttpServer())
       .patch(`/orders/${randomUUID()}/deliver`)
       .send({ photoUrl: 'https://example.com/photo.jpg' })

@@ -1,7 +1,7 @@
-import { INestApplication } from '@nestjs/common'
+﻿import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { hash } from 'bcryptjs'
-import { AppModule } from 'src/app.module'
+import { AppModule } from 'src/infra/app.module'
 import { PrismaService } from 'src/infra/database/prisma.service'
 import request from 'supertest'
 
@@ -27,7 +27,7 @@ describe('AuthenticateCourierController (E2E)', () => {
     await app.close()
   })
 
-  it('[POST] /sessions — should return 201 with an accessToken on valid credentials', async () => {
+  it('[POST] /sessions â€” should return 201 with an accessToken on valid credentials', async () => {
     await prisma.courier.create({
       data: {
         name: 'Test Courier',
@@ -45,7 +45,7 @@ describe('AuthenticateCourierController (E2E)', () => {
     expect(typeof response.body.accessToken).toBe('string')
   })
 
-  it('[POST] /sessions — should return 401 when courier does not exist', async () => {
+  it('[POST] /sessions â€” should return 401 when courier does not exist', async () => {
     const response = await request(app.getHttpServer())
       .post('/sessions')
       .send({ cpf: '00000000000', password: 'password123' })
@@ -53,7 +53,7 @@ describe('AuthenticateCourierController (E2E)', () => {
     expect(response.statusCode).toBe(401)
   })
 
-  it('[POST] /sessions — should return 401 when password is wrong', async () => {
+  it('[POST] /sessions â€” should return 401 when password is wrong', async () => {
     await prisma.courier.create({
       data: {
         name: 'Test Courier 2',

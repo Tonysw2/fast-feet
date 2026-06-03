@@ -1,8 +1,8 @@
-import { randomUUID } from 'node:crypto'
+﻿import { randomUUID } from 'node:crypto'
 import { INestApplication } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { Test } from '@nestjs/testing'
-import { AppModule } from 'src/app.module'
+import { AppModule } from 'src/infra/app.module'
 import { PrismaService } from 'src/infra/database/prisma.service'
 import request from 'supertest'
 
@@ -13,11 +13,11 @@ describe('FetchNearbyOrdersController (E2E)', () => {
   let accessToken: string
   let recipientId: string
 
-  // São Paulo coordinates
+  // SÃ£o Paulo coordinates
   const SP_LATITUDE = -23.55052
   const SP_LONGITUDE = -46.633309
 
-  // Rio de Janeiro coordinates (~360km away from SP — outside 50km radius)
+  // Rio de Janeiro coordinates (~360km away from SP â€” outside 50km radius)
   const RJ_LATITUDE = -22.906847
   const RJ_LONGITUDE = -43.172897
 
@@ -51,8 +51,8 @@ describe('FetchNearbyOrdersController (E2E)', () => {
     await app.close()
   })
 
-  it('[GET] /orders/nearby — should return only WAITING orders within 50km', async () => {
-    // Near order (São Paulo) — should appear
+  it('[GET] /orders/nearby â€” should return only WAITING orders within 50km', async () => {
+    // Near order (SÃ£o Paulo) â€” should appear
     await prisma.order.create({
       data: {
         title: 'Nearby Package',
@@ -63,7 +63,7 @@ describe('FetchNearbyOrdersController (E2E)', () => {
       },
     })
 
-    // Far order (Rio de Janeiro) — should NOT appear
+    // Far order (Rio de Janeiro) â€” should NOT appear
     await prisma.order.create({
       data: {
         title: 'Far Package',
@@ -88,7 +88,7 @@ describe('FetchNearbyOrdersController (E2E)', () => {
     expect(titles).not.toContain('Far Package')
   })
 
-  it('[GET] /orders/nearby — should return empty list when no orders within 50km', async () => {
+  it('[GET] /orders/nearby â€” should return empty list when no orders within 50km', async () => {
     const response = await request(app.getHttpServer())
       .get('/orders/nearby')
       .set('Authorization', `Bearer ${accessToken}`)
@@ -98,7 +98,7 @@ describe('FetchNearbyOrdersController (E2E)', () => {
     expect(response.body.orders).toHaveLength(0)
   })
 
-  it('[GET] /orders/nearby — should return 400 when coordinates are missing', async () => {
+  it('[GET] /orders/nearby â€” should return 400 when coordinates are missing', async () => {
     const response = await request(app.getHttpServer())
       .get('/orders/nearby')
       .set('Authorization', `Bearer ${accessToken}`)
@@ -106,7 +106,7 @@ describe('FetchNearbyOrdersController (E2E)', () => {
     expect(response.statusCode).toBe(400)
   })
 
-  it('[GET] /orders/nearby — should return 401 when not authenticated', async () => {
+  it('[GET] /orders/nearby â€” should return 401 when not authenticated', async () => {
     const response = await request(app.getHttpServer())
       .get('/orders/nearby')
       .query({ latitude: SP_LATITUDE, longitude: SP_LONGITUDE })

@@ -1,8 +1,8 @@
-import { randomUUID } from 'node:crypto'
+﻿import { randomUUID } from 'node:crypto'
 import { INestApplication } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { Test } from '@nestjs/testing'
-import { AppModule } from 'src/app.module'
+import { AppModule } from 'src/infra/app.module'
 import { PrismaService } from 'src/infra/database/prisma.service'
 import request from 'supertest'
 
@@ -38,7 +38,7 @@ describe('FetchOrdersController (E2E)', () => {
     await app.close()
   })
 
-  it('[GET] /orders — should return 200 with orders list', async () => {
+  it('[GET] /orders â€” should return 200 with orders list', async () => {
     const recipient = await prisma.recipient.create({
       data: { name: 'Test Recipient', email: 'fetch-orders@test.com' },
     })
@@ -78,7 +78,7 @@ describe('FetchOrdersController (E2E)', () => {
     expect(order).toHaveProperty('deliveryLongitude')
   })
 
-  it('[GET] /orders?page=2 — should return empty list when there are fewer than 20 orders', async () => {
+  it('[GET] /orders?page=2 â€” should return empty list when there are fewer than 20 orders', async () => {
     const response = await request(app.getHttpServer())
       .get('/orders?page=2')
       .set('Authorization', `Bearer ${accessToken}`)
@@ -87,7 +87,7 @@ describe('FetchOrdersController (E2E)', () => {
     expect(response.body.orders).toHaveLength(0)
   })
 
-  it('[GET] /orders — should return 403 when authenticated as courier', async () => {
+  it('[GET] /orders â€” should return 403 when authenticated as courier', async () => {
     const response = await request(app.getHttpServer())
       .get('/orders')
       .set('Authorization', `Bearer ${courierAccessToken}`)
@@ -95,7 +95,7 @@ describe('FetchOrdersController (E2E)', () => {
     expect(response.statusCode).toBe(403)
   })
 
-  it('[GET] /orders — should return 401 when not authenticated', async () => {
+  it('[GET] /orders â€” should return 401 when not authenticated', async () => {
     const response = await request(app.getHttpServer()).get('/orders')
 
     expect(response.statusCode).toBe(401)

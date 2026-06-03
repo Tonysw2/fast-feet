@@ -1,7 +1,7 @@
-import { INestApplication } from '@nestjs/common'
+﻿import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { hash } from 'bcryptjs'
-import { AppModule } from 'src/app.module'
+import { AppModule } from 'src/infra/app.module'
 import { PrismaService } from 'src/infra/database/prisma.service'
 import request from 'supertest'
 
@@ -27,7 +27,7 @@ describe('AuthenticateAdminController (E2E)', () => {
     await app.close()
   })
 
-  it('[POST] /sessions/admin — should return 201 with an accessToken on valid credentials', async () => {
+  it('[POST] /sessions/admin â€” should return 201 with an accessToken on valid credentials', async () => {
     await prisma.admin.create({
       data: {
         name: 'Test Admin',
@@ -45,7 +45,7 @@ describe('AuthenticateAdminController (E2E)', () => {
     expect(typeof response.body.accessToken).toBe('string')
   })
 
-  it('[POST] /sessions/admin — should return 401 when admin does not exist', async () => {
+  it('[POST] /sessions/admin â€” should return 401 when admin does not exist', async () => {
     const response = await request(app.getHttpServer())
       .post('/sessions/admin')
       .send({ cpf: '00000000000', password: 'password123' })
@@ -53,7 +53,7 @@ describe('AuthenticateAdminController (E2E)', () => {
     expect(response.statusCode).toBe(401)
   })
 
-  it('[POST] /sessions/admin — should return 401 when password is wrong', async () => {
+  it('[POST] /sessions/admin â€” should return 401 when password is wrong', async () => {
     await prisma.admin.create({
       data: {
         name: 'Test Admin 2',
