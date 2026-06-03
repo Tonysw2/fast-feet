@@ -1,7 +1,6 @@
-import { config } from 'dotenv'
-import 'dotenv/config'
 import { execSync } from 'node:child_process'
 import { randomUUID } from 'node:crypto'
+import { config } from 'dotenv'
 import { Client } from 'pg'
 import { DomainEvents } from 'src/core/events/domain-events'
 import { envSchema } from 'src/infra/env/env'
