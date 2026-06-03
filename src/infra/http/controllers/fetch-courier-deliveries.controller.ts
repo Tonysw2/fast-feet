@@ -5,6 +5,7 @@ import {
   type UserPayload,
 } from 'src/infra/auth/current-user.decorator'
 import z from 'zod'
+import { OrderPresenter } from '../presenters/order-presenter'
 
 @Controller('/couriers/me/deliveries')
 export class FetchCourierDeliveriesController {
@@ -22,15 +23,7 @@ export class FetchCourierDeliveriesController {
     })
 
     return {
-      orders: result.value.orders.map((o) => ({
-        id: o.id.toString(),
-        title: o.title,
-        status: o.status,
-        recipientId: o.recipientId.toString(),
-        photoUrl: o.photoUrl,
-        deliveryLatitude: o.deliveryLatitude,
-        deliveryLongitude: o.deliveryLongitude,
-      })),
+      orders: result.value.orders.map(OrderPresenter.toHTTP),
     }
   }
 }

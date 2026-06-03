@@ -8,6 +8,7 @@ import {
 import { ResourceNotFoundError } from 'src/domain/delivery/application/use-cases/errors/resource-not-found'
 import { GetOrderUseCase } from 'src/domain/delivery/application/use-cases/get-order'
 import { Roles } from 'src/infra/auth/roles.decorator'
+import { OrderPresenter } from '../presenters/order-presenter'
 
 @Controller('/orders/:id')
 @Roles('ADMIN')
@@ -32,16 +33,7 @@ export class GetOrderController {
     const { order } = result.value
 
     return {
-      order: {
-        id: order.id.toString(),
-        title: order.title,
-        status: order.status,
-        recipientId: order.recipientId.toString(),
-        courierId: order.courierId?.toString() ?? null,
-        photoUrl: order.photoUrl,
-        deliveryLatitude: order.deliveryLatitude,
-        deliveryLongitude: order.deliveryLongitude,
-      },
+      order: OrderPresenter.toHTTP(order),
     }
   }
 }

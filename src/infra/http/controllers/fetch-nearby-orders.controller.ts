@@ -1,6 +1,7 @@
 import { BadRequestException, Controller, Get, Query } from '@nestjs/common'
 import { FetchNearbyOrdersUseCase } from 'src/domain/delivery/application/use-cases/fetch-nearby-orders'
 import z from 'zod'
+import { OrderPresenter } from '../presenters/order-presenter'
 
 @Controller('/orders/nearby')
 export class FetchNearbyOrdersController {
@@ -29,14 +30,7 @@ export class FetchNearbyOrdersController {
     })
 
     return {
-      orders: result.value.orders.map((o) => ({
-        id: o.id.toString(),
-        title: o.title,
-        status: o.status,
-        recipientId: o.recipientId.toString(),
-        deliveryLatitude: o.deliveryLatitude,
-        deliveryLongitude: o.deliveryLongitude,
-      })),
+      orders: result.value.orders.map(OrderPresenter.toHTTP),
     }
   }
 }

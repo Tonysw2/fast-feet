@@ -2,6 +2,7 @@ import { Controller, Get, Query } from '@nestjs/common'
 import { FetchCouriersUseCase } from 'src/domain/delivery/application/use-cases/fetch-couriers'
 import { Roles } from 'src/infra/auth/roles.decorator'
 import z from 'zod'
+import { CourierPresenter } from '../presenters/courier-presenter'
 
 @Controller('/couriers')
 @Roles('ADMIN')
@@ -15,11 +16,7 @@ export class FetchCouriersController {
     const result = await this.fetchCouriers.execute({ page: pageNumber })
 
     return {
-      couriers: result.value.couriers.map((c) => ({
-        id: c.id.toString(),
-        name: c.name,
-        cpf: c.cpf.value,
-      })),
+      couriers: result.value.couriers.map(CourierPresenter.toHTTP),
     }
   }
 }

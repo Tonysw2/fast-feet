@@ -8,6 +8,7 @@ import {
 import { ResourceNotFoundError } from 'src/domain/delivery/application/use-cases/errors/resource-not-found'
 import { GetRecipientUseCase } from 'src/domain/delivery/application/use-cases/get-recipient'
 import { Roles } from 'src/infra/auth/roles.decorator'
+import { RecipientPresenter } from '../presenters/recipient-presenter'
 
 @Controller('/recipients/:id')
 @Roles('ADMIN')
@@ -32,11 +33,7 @@ export class GetRecipientController {
     const { recipient } = result.value
 
     return {
-      recipient: {
-        id: recipient.id.toString(),
-        name: recipient.name,
-        email: recipient.email,
-      },
+      recipient: RecipientPresenter.toHTTP(recipient),
     }
   }
 }

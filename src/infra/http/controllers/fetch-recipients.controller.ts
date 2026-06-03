@@ -2,6 +2,7 @@ import { Controller, Get, Query } from '@nestjs/common'
 import { FetchRecipientsUseCase } from 'src/domain/delivery/application/use-cases/fetch-recipients'
 import { Roles } from 'src/infra/auth/roles.decorator'
 import z from 'zod'
+import { RecipientPresenter } from '../presenters/recipient-presenter'
 
 @Controller('/recipients')
 @Roles('ADMIN')
@@ -15,11 +16,7 @@ export class FetchRecipientsController {
     const result = await this.fetchRecipients.execute({ page: pageNumber })
 
     return {
-      recipients: result.value.recipients.map((r) => ({
-        id: r.id.toString(),
-        name: r.name,
-        email: r.email,
-      })),
+      recipients: result.value.recipients.map(RecipientPresenter.toHTTP),
     }
   }
 }

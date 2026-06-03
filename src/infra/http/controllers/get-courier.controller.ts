@@ -8,6 +8,7 @@ import {
 import { ResourceNotFoundError } from 'src/domain/delivery/application/use-cases/errors/resource-not-found'
 import { GetCourierUseCase } from 'src/domain/delivery/application/use-cases/get-courier'
 import { Roles } from 'src/infra/auth/roles.decorator'
+import { CourierPresenter } from '../presenters/courier-presenter'
 
 @Controller('/couriers/:id')
 @Roles('ADMIN')
@@ -32,11 +33,7 @@ export class GetCourierController {
     const { courier } = result.value
 
     return {
-      courier: {
-        id: courier.id.toString(),
-        name: courier.name,
-        cpf: courier.cpf.value,
-      },
+      courier: CourierPresenter.toHTTP(courier),
     }
   }
 }
