@@ -6,7 +6,6 @@ import {
   NotFoundException,
   Param,
   Patch,
-  UsePipes,
 } from '@nestjs/common'
 import { ChangeCourierPasswordUseCase } from 'src/domain/delivery/application/use-cases/change-courier-password'
 import { ResourceNotFoundError } from 'src/domain/delivery/application/use-cases/errors/resource-not-found'
@@ -26,8 +25,10 @@ export class ChangeCourierPasswordController {
 
   @Patch()
   @HttpCode(204)
-  @UsePipes(new ZodValidationPipe(schema))
-  async handle(@Param('id') id: string, @Body() body: Schema) {
+  async handle(
+    @Param('id') id: string,
+    @Body(new ZodValidationPipe(schema)) body: Schema,
+  ) {
     const result = await this.changeCourierPassword.execute({
       courierId: id,
       password: body.password,

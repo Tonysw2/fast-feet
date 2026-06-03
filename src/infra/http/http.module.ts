@@ -91,6 +91,7 @@ import { ReturnOrderController } from './controllers/return-order.controller'
     AuthenticateAdminController,
     RegisterCourierController,
     FetchCouriersController,
+    FetchCourierDeliveriesController,
     GetCourierController,
     EditCourierController,
     DeleteCourierController,
@@ -110,7 +111,6 @@ import { ReturnOrderController } from './controllers/return-order.controller'
     PickUpOrderController,
     DeliverOrderController,
     ReturnOrderController,
-    FetchCourierDeliveriesController,
   ],
 })
 export class HttpModule {}
