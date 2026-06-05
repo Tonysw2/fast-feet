@@ -81,7 +81,7 @@ export class PrismaOrdersRepository implements OrdersRepository {
     { page }: { page: number },
   ): Promise<Order[]> {
     const orders = await this.prisma.order.findMany({
-      where: { courierId, status: 'DELIVERED' },
+      where: { courierId },
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,
     })

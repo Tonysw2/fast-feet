@@ -12,34 +12,43 @@ describe('FetchCourierDeliveries UseCase', () => {
     sut = new FetchCourierDeliveriesUseCase(ordersRepo)
   })
 
-  it('should return delivered orders for a courier', async () => {
+  it('should return all orders assigned to a courier', async () => {
     const courierId = new UniqueEntityId()
     const otherCourierId = new UniqueEntityId()
 
     ordersRepo.items.push(
       Order.create({
-        title: 'my-delivery-1',
+        title: 'my-delivery-picked-up',
         recipientId: new UniqueEntityId(),
         courierId,
-        photoUrl: 'http://example.com/photo1.jpg',
+        photoUrl: null,
+        deliveryLatitude: -23.5,
+        deliveryLongitude: -46.6,
+        status: 'PICKED_UP',
+      }),
+      Order.create({
+        title: 'my-delivery-delivered',
+        recipientId: new UniqueEntityId(),
+        courierId,
+        photoUrl: 'http://example.com/photo.jpg',
         deliveryLatitude: -23.5,
         deliveryLongitude: -46.6,
         status: 'DELIVERED',
       }),
       Order.create({
-        title: 'my-delivery-2',
+        title: 'my-delivery-returned',
         recipientId: new UniqueEntityId(),
         courierId,
-        photoUrl: 'http://example.com/photo2.jpg',
+        photoUrl: null,
         deliveryLatitude: -23.5,
         deliveryLongitude: -46.6,
-        status: 'DELIVERED',
+        status: 'RETURNED',
       }),
       Order.create({
-        title: 'other-delivery',
+        title: 'other-courier-delivery',
         recipientId: new UniqueEntityId(),
         courierId: otherCourierId,
-        photoUrl: 'http://example.com/photo3.jpg',
+        photoUrl: 'http://example.com/photo2.jpg',
         deliveryLatitude: -23.5,
         deliveryLongitude: -46.6,
         status: 'DELIVERED',
@@ -52,9 +61,14 @@ describe('FetchCourierDeliveries UseCase', () => {
     })
 
     assert(result.isRight())
-    expect(result.value.orders).toHaveLength(2)
-    expect(result.value.orders[0].title).toBe('my-delivery-1')
-    expect(result.value.orders[1].title).toBe('my-delivery-2')
+    expect(result.value.orders).toHaveLength(3)
+    expect(result.value.orders.map((o) => o.title)).toEqual(
+      expect.arrayContaining([
+        'my-delivery-picked-up',
+        'my-delivery-delivered',
+        'my-delivery-returned',
+      ]),
+    )
   })
 
   it('should paginate deliveries', async () => {

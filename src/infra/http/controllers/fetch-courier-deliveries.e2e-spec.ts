@@ -44,6 +44,12 @@ describe('FetchCourierDeliveriesController (E2E)', () => {
       status: 'DELIVERED',
     })
 
+    await orderFactory.makeOrder({
+      courierId: courier.id,
+      recipientId: recipient.id,
+      status: 'PICKED_UP',
+    })
+
     const accessToken = await jwtService.signAsync({
       sub: courier.id.toString(),
       role: courier.role,
@@ -61,6 +67,6 @@ describe('FetchCourierDeliveriesController (E2E)', () => {
         ]),
       }),
     )
-    expect(response.body.orders).toHaveLength(1)
+    expect(response.body.orders).toHaveLength(2)
   })
 })

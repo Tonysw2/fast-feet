@@ -61,10 +61,7 @@ export class InMemoryOrdersRepository implements OrdersRepository {
     { page }: { page: number },
   ): Promise<Order[]> {
     return this.items
-      .filter(
-        (o) =>
-          o.status === 'DELIVERED' && o.courierId?.toString() === courierId,
-      )
+      .filter((o) => o.courierId?.toString() === courierId)
       .slice((page - 1) * 20, page * 20)
   }
 
