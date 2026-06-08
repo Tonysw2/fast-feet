@@ -20,7 +20,12 @@ describe('DeliverOrderController (E2E)', () => {
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule, DatabaseModule],
-      providers: [CourierFactory, OrderFactory, RecipientFactory, AttachmentFactory],
+      providers: [
+        CourierFactory,
+        OrderFactory,
+        RecipientFactory,
+        AttachmentFactory,
+      ],
     }).compile()
 
     app = moduleRef.createNestApplication()
