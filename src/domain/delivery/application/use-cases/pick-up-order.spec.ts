@@ -1,4 +1,4 @@
-import { UniqueEntityId } from 'src/core/value-objects/unique-entity-id'
+﻿import { UniqueEntityId } from 'src/core/value-objects/unique-entity-id'
 import { Order } from 'src/domain/delivery/enterprise/entities/order'
 import { InMemoryOrdersRepository } from 'tests/repositories/in-memory-orders-repository'
 import { NotAllowedError } from './errors/not-allowed'
@@ -19,7 +19,7 @@ describe('PickUpOrder UseCase', () => {
       title: 'order-1',
       recipientId: new UniqueEntityId(),
       courierId: null,
-      photoUrl: null,
+      attachmentId: null,
       deliveryLatitude: -23.5,
       deliveryLongitude: -46.6,
     })
@@ -53,7 +53,7 @@ describe('PickUpOrder UseCase', () => {
       title: 'order-1',
       recipientId: new UniqueEntityId(),
       courierId,
-      photoUrl: null,
+      attachmentId: null,
       deliveryLatitude: -23.5,
       deliveryLongitude: -46.6,
       status: 'PICKED_UP',

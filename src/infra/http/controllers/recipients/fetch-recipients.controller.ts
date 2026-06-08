@@ -1,8 +1,8 @@
-import { Controller, Get, Query } from '@nestjs/common'
+﻿import { Controller, Get, Query } from '@nestjs/common'
 import { FetchRecipientsUseCase } from 'src/domain/delivery/application/use-cases/fetch-recipients'
 import { Roles } from 'src/infra/auth/roles.decorator'
 import z from 'zod'
-import { RecipientPresenter } from '../presenters/recipient-presenter'
+import { RecipientPresenter } from '../../presenters/recipient-presenter'
 
 @Controller('/recipients')
 @Roles('ADMIN')

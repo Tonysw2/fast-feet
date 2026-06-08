@@ -1,4 +1,4 @@
-import { DomainEvents } from 'src/core/events/domain-events'
+﻿import { DomainEvents } from 'src/core/events/domain-events'
 import { UniqueEntityId } from 'src/core/value-objects/unique-entity-id'
 import { Order } from 'src/domain/delivery/enterprise/entities/order'
 import { Recipient } from 'src/domain/delivery/enterprise/entities/recipient'
@@ -40,7 +40,7 @@ describe('OnOrderWaiting', () => {
       title: 'Notebook',
       recipientId: recipient.id,
       courierId: new UniqueEntityId(),
-      photoUrl: null,
+      attachmentId: null,
       deliveryLatitude: -23.5,
       deliveryLongitude: -46.6,
       status: 'RETURNED',
@@ -54,7 +54,7 @@ describe('OnOrderWaiting', () => {
       recipient.id.toString(),
     )
     expect(notificationsRepo.items[0].title).toBe(
-      'Encomenda disponível para retirada',
+      'Encomenda disponÃ­vel para retirada',
     )
   })
 })

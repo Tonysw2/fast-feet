@@ -1,12 +1,16 @@
 import {
   BadRequestException,
   Controller,
+  FileTypeValidator,
   HttpCode,
+  MaxFileSizeValidator,
+  ParseFilePipe,
   Post,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
+import { InvalidAttachmentType } from 'src/domain/delivery/application/use-cases/errors/invalid-attachment-type'
 import { UploadAttachmentUseCase } from 'src/domain/delivery/application/use-cases/upload-attachment'
 
 @Controller('/attachments')
@@ -16,7 +20,21 @@ export class UploadAttachmentController {
   @Post()
   @HttpCode(201)
   @UseInterceptors(FileInterceptor('file'))
-  async handle(@UploadedFile() file: Express.Multer.File) {
+  async handle(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({
+            maxSize: 1024 * 1024 * 2, // 2MB
+          }),
+          new FileTypeValidator({
+            fileType: '.(png|jpg|jpeg)',
+          }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
     if (!file) {
       throw new BadRequestException('File is required')
     }
@@ -28,7 +46,17 @@ export class UploadAttachmentController {
     })
 
     if (result.isLeft()) {
-      throw new BadRequestException(result.value.message)
+      const error = result.value
+
+      switch (error.constructor) {
+        case InvalidAttachmentType: {
+          throw new BadRequestException(error.message)
+        }
+
+        default: {
+          throw new BadRequestException(error.message)
+        }
+      }
     }
 
     return { attachmentId: result.value.attachment.id.toString() }

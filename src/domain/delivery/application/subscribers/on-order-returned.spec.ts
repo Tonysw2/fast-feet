@@ -1,4 +1,4 @@
-import { DomainEvents } from 'src/core/events/domain-events'
+﻿import { DomainEvents } from 'src/core/events/domain-events'
 import { UniqueEntityId } from 'src/core/value-objects/unique-entity-id'
 import { Order } from 'src/domain/delivery/enterprise/entities/order'
 import { Recipient } from 'src/domain/delivery/enterprise/entities/recipient'
@@ -41,7 +41,7 @@ describe('OnOrderReturned', () => {
       title: 'Smartphone',
       recipientId: recipient.id,
       courierId,
-      photoUrl: null,
+      attachmentId: null,
       deliveryLatitude: -23.5,
       deliveryLongitude: -46.6,
       status: 'PICKED_UP',

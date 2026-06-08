@@ -1,4 +1,4 @@
-import {
+﻿import {
   BadRequestException,
   Controller,
   Get,
@@ -6,18 +6,18 @@ import {
   Param,
 } from '@nestjs/common'
 import { ResourceNotFoundError } from 'src/domain/delivery/application/use-cases/errors/resource-not-found'
-import { GetCourierUseCase } from 'src/domain/delivery/application/use-cases/get-courier'
+import { GetRecipientUseCase } from 'src/domain/delivery/application/use-cases/get-recipient'
 import { Roles } from 'src/infra/auth/roles.decorator'
-import { CourierPresenter } from '../presenters/courier-presenter'
+import { RecipientPresenter } from '../../presenters/recipient-presenter'
 
-@Controller('/couriers/:id')
+@Controller('/recipients/:id')
 @Roles('ADMIN')
-export class GetCourierController {
-  constructor(private readonly getCourier: GetCourierUseCase) {}
+export class GetRecipientController {
+  constructor(private readonly getRecipient: GetRecipientUseCase) {}
 
   @Get()
   async handle(@Param('id') id: string) {
-    const result = await this.getCourier.execute({ courierId: id })
+    const result = await this.getRecipient.execute({ recipientId: id })
 
     if (result.isLeft()) {
       const error = result.value
@@ -30,10 +30,10 @@ export class GetCourierController {
       }
     }
 
-    const { courier } = result.value
+    const { recipient } = result.value
 
     return {
-      courier: CourierPresenter.toHTTP(courier),
+      recipient: RecipientPresenter.toHTTP(recipient),
     }
   }
 }
