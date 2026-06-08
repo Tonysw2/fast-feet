@@ -1,5 +1,6 @@
 import { InMemoryAttachmentsRepository } from 'tests/repositories/in-memory-attachments-repository'
 import { FakeUploader } from 'tests/storage/fake-uploader'
+import { InvalidAttachmentType } from './errors/invalid-attachment-type'
 import { UploadAttachmentUseCase } from './upload-attachment'
 
 let attachmentsRepo: InMemoryAttachmentsRepository
@@ -35,7 +36,7 @@ describe('UploadAttachment UseCase', () => {
     })
 
     assert(result.isLeft())
-    expect(result.value.message).toBe('Invalid file type')
+    expect(result.value).toBeInstanceOf(InvalidAttachmentType)
     expect(attachmentsRepo.items).toHaveLength(0)
   })
 })
