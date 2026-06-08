@@ -43,11 +43,21 @@ model Recipient {
   @@map("recipients")
 }
 
+model Attachment {
+  id    String @id @default(uuid())
+  title String
+  url   String
+
+  order Order?
+
+  @@map("attachments")
+}
+
 model Order {
   id                String      @id @default(uuid())
   title             String
   status            OrderStatus @default(WAITING)
-  photoUrl          String?
+  attachmentId      String?     @unique
   deliveryLatitude  Float
   deliveryLongitude Float
   recipientId       String
@@ -55,8 +65,9 @@ model Order {
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
 
-  recipient Recipient @relation(fields: [recipientId], references: [id])
-  courier   Courier?  @relation(fields: [courierId], references: [id])
+  recipient  Recipient   @relation(fields: [recipientId], references: [id])
+  courier    Courier?    @relation(fields: [courierId], references: [id])
+  attachment Attachment? @relation(fields: [attachmentId], references: [id])
 
   @@map("orders")
 }

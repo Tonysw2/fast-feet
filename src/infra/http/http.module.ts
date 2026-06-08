@@ -23,9 +23,11 @@ import { PickUpOrderUseCase } from 'src/domain/delivery/application/use-cases/pi
 import { RegisterCourierUseCase } from 'src/domain/delivery/application/use-cases/register-courier'
 import { RegisterRecipientUseCase } from 'src/domain/delivery/application/use-cases/register-recipient'
 import { ReturnOrderUseCase } from 'src/domain/delivery/application/use-cases/return-order'
+import { UploadAttachmentUseCase } from 'src/domain/delivery/application/use-cases/upload-attachment'
 import { CryptographyModule } from '../cryptography/cryptography.module'
 import { DatabaseModule } from '../database/database.module'
 import { EventsModule } from '../events/events.module'
+import { StorageModule } from '../storage/storage.module'
 import { AuthenticateAdminController } from './controllers/authenticate-admin.controller'
 import { AuthenticateCourierController } from './controllers/authenticate-courier.controller'
 import { ChangeCourierPasswordController } from './controllers/change-courier-password.controller'
@@ -50,9 +52,10 @@ import { PickUpOrderController } from './controllers/pick-up-order.controller'
 import { RegisterCourierController } from './controllers/register-courier.controller'
 import { RegisterRecipientController } from './controllers/register-recipient.controller'
 import { ReturnOrderController } from './controllers/return-order.controller'
+import { UploadAttachmentController } from './controllers/upload-attachment.controller'
 
 @Module({
-  imports: [DatabaseModule, CryptographyModule, EventsModule],
+  imports: [DatabaseModule, CryptographyModule, EventsModule, StorageModule],
   providers: [
     // Use cases — auth
     AuthenticateCourierUseCase,
@@ -85,6 +88,9 @@ import { ReturnOrderController } from './controllers/return-order.controller'
     ReturnOrderUseCase,
     FetchNearbyOrdersUseCase,
     FetchCourierDeliveriesUseCase,
+
+    // Use cases — attachments
+    UploadAttachmentUseCase,
   ],
   controllers: [
     AuthenticateCourierController,
@@ -111,6 +117,7 @@ import { ReturnOrderController } from './controllers/return-order.controller'
     PickUpOrderController,
     DeliverOrderController,
     ReturnOrderController,
+    UploadAttachmentController,
   ],
 })
 export class HttpModule {}

@@ -8,7 +8,7 @@ export class OrderPresenter {
       status: order.status,
       recipientId: order.recipientId.toString(),
       courierId: order.courierId?.toString() ?? null,
-      photoUrl: order.photoUrl ?? null,
+      attachmentId: order.attachmentId?.toString() ?? null,
       deliveryLatitude: order.deliveryLatitude,
       deliveryLongitude: order.deliveryLongitude,
     }

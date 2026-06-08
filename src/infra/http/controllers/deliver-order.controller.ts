@@ -18,7 +18,7 @@ import {
 import { ZodValidationPipe } from 'src/infra/http/pipes/zod-validation-pipe'
 import z from 'zod'
 
-const schema = z.object({ photoUrl: z.string().url() })
+const schema = z.object({ attachmentId: z.string().uuid() })
 type Schema = z.infer<typeof schema>
 
 @Controller('/orders/:id/deliver')
@@ -35,7 +35,7 @@ export class DeliverOrderController {
     const result = await this.deliverOrder.execute({
       orderId: id,
       courierId: user.sub,
-      photoUrl: body.photoUrl,
+      attachmentId: body.attachmentId,
     })
 
     if (result.isLeft()) {

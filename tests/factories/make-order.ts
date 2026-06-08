@@ -17,7 +17,7 @@ export const makeOrder = (
       courierId: override.courierId ?? null,
       recipientId: override.recipientId ?? new UniqueEntityId(),
       title: override.title ?? faker.lorem.text(),
-      photoUrl: override.photoUrl ?? null,
+      attachmentId: override.attachmentId ?? null,
       deliveryLatitude: override.deliveryLatitude ?? faker.location.latitude(),
       deliveryLongitude:
         override.deliveryLongitude ?? faker.location.longitude(),

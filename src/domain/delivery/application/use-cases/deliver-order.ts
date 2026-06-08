@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { Either, left, right } from 'src/core/either'
+import { UniqueEntityId } from 'src/core/value-objects/unique-entity-id'
 import { Order } from '../../enterprise/entities/order'
+import { AttachmentsRepository } from '../repositories/attachments-repository'
 import { OrdersRepository } from '../repositories/orders-repository'
 import { NotAllowedError } from './errors/not-allowed'
 import { ResourceNotFoundError } from './errors/resource-not-found'
@@ -8,7 +10,7 @@ import { ResourceNotFoundError } from './errors/resource-not-found'
 interface DeliverOrderUseCaseRequest {
   orderId: string
   courierId: string
-  photoUrl: string
+  attachmentId: string
 }
 
 type DeliverOrderUseCaseResponse = Either<
@@ -18,12 +20,15 @@ type DeliverOrderUseCaseResponse = Either<
 
 @Injectable()
 export class DeliverOrderUseCase {
-  constructor(private readonly ordersRepo: OrdersRepository) {}
+  constructor(
+    private readonly ordersRepo: OrdersRepository,
+    private readonly attachmentsRepo: AttachmentsRepository,
+  ) {}
 
   async execute({
     orderId,
     courierId,
-    photoUrl,
+    attachmentId,
   }: DeliverOrderUseCaseRequest): Promise<DeliverOrderUseCaseResponse> {
     const order = await this.ordersRepo.findById(orderId)
 
@@ -39,7 +44,13 @@ export class DeliverOrderUseCase {
       return left(new NotAllowedError())
     }
 
-    order.deliver(photoUrl)
+    const attachment = await this.attachmentsRepo.findById(attachmentId)
+
+    if (!attachment) {
+      return left(new ResourceNotFoundError())
+    }
+
+    order.deliver(new UniqueEntityId(attachmentId))
 
     await this.ordersRepo.save(order)
 

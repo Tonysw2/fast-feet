@@ -13,7 +13,9 @@ export class PrismaOrderMapper {
         status: data.status as OrderStatus,
         recipientId: new UniqueEntityId(data.recipientId),
         courierId: data.courierId ? new UniqueEntityId(data.courierId) : null,
-        photoUrl: data.photoUrl,
+        attachmentId: data.attachmentId
+          ? new UniqueEntityId(data.attachmentId)
+          : null,
         deliveryLatitude: data.deliveryLatitude,
         deliveryLongitude: data.deliveryLongitude,
       },
@@ -28,7 +30,7 @@ export class PrismaOrderMapper {
       status: order.status,
       recipientId: order.recipientId.toString(),
       courierId: order.courierId?.toString() ?? null,
-      photoUrl: order.photoUrl,
+      attachmentId: order.attachmentId?.toString() ?? null,
       deliveryLatitude: order.deliveryLatitude,
       deliveryLongitude: order.deliveryLongitude,
     }
@@ -42,7 +44,7 @@ export class PrismaOrderMapper {
         status: order.status,
         recipientId: order.recipientId.toString(),
         courierId: order.courierId?.toString() ?? null,
-        photoUrl: order.photoUrl,
+        attachmentId: order.attachmentId?.toString() ?? null,
         deliveryLatitude: order.deliveryLatitude,
         deliveryLongitude: order.deliveryLongitude,
       },

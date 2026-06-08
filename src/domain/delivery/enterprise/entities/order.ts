@@ -14,7 +14,7 @@ export interface OrderProps {
   recipientId: UniqueEntityId
   deliveryLatitude: number
   deliveryLongitude: number
-  photoUrl?: string | null
+  attachmentId?: UniqueEntityId | null
   courierId?: UniqueEntityId | null
 }
 
@@ -43,8 +43,8 @@ export class Order extends AggregateRoot<OrderProps> {
     return this.props.courierId
   }
 
-  get photoUrl() {
-    return this.props.photoUrl
+  get attachmentId() {
+    return this.props.attachmentId
   }
 
   get deliveryLatitude() {
@@ -75,9 +75,9 @@ export class Order extends AggregateRoot<OrderProps> {
     this.addDomainEvent(new OrderPickedUpEvent(this))
   }
 
-  deliver(photoUrl: string) {
+  deliver(attachmentId: UniqueEntityId) {
     this.props.status = 'DELIVERED'
-    this.props.photoUrl = photoUrl
+    this.props.attachmentId = attachmentId
     this.addDomainEvent(new OrderDeliveredEvent(this))
   }
 
