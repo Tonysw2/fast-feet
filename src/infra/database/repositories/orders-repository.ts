@@ -43,7 +43,7 @@ export class PrismaOrdersRepository implements OrdersRepository {
         id: string
         title: string
         status: string
-        photoUrl: string | null
+        attachmentId: string | null
         deliveryLatitude: number
         deliveryLongitude: number
         recipientId: string
@@ -52,7 +52,7 @@ export class PrismaOrdersRepository implements OrdersRepository {
         updatedAt: Date
       }>
     >`
-      SELECT id, title, status, "photoUrl", "deliveryLatitude", "deliveryLongitude",
+      SELECT id, title, status, "attachmentId", "deliveryLatitude", "deliveryLongitude",
              "recipientId", "courierId", "createdAt", "updatedAt"
       FROM ${ordersTable}
       WHERE status = 'WAITING'
