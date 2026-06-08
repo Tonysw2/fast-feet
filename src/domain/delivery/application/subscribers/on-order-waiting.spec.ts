@@ -54,7 +54,7 @@ describe('OnOrderWaiting', () => {
       recipient.id.toString(),
     )
     expect(notificationsRepo.items[0].title).toBe(
-      'Encomenda disponÃ­vel para retirada',
+      'Encomenda disponível para retirada',
     )
   })
 })
